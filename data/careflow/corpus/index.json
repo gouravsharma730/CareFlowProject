@@ -1,0 +1,34 @@
+[
+  {
+    "slug": "referral-policy",
+    "title": "Referral Management Policy",
+    "section": "operations",
+    "markdown": "corpus/markdown/referral-policy.md",
+    "pdf": "corpus/pdf/referral-policy.pdf",
+    "chars": 6661
+  },
+  {
+    "slug": "preauth-matrix",
+    "title": "Pre-Authorisation Requirement Matrix",
+    "section": "insurance",
+    "markdown": "corpus/markdown/preauth-matrix.md",
+    "pdf": "corpus/pdf/preauth-matrix.pdf",
+    "chars": 14208
+  },
+  {
+    "slug": "copay-schedule",
+    "title": "Co-payment and Cost-Share Schedule",
+    "section": "insurance",
+    "markdown": "corpus/markdown/copay-schedule.md",
+    "pdf": "corpus/pdf/copay-schedule.pdf",
+    "chars": 4766
+  },
+  {
+    "slug": "clinical-escalation",
+    "title": "Clinical Escalation and Scope-of-Practice Standard",
+    "section": "safety",
+    "markdown": "corpus/markdown/clinical-escalation.md",
+    "pdf": "corpus/pdf/clinical-escalation.pdf",
+    "chars": 5585
+  }
+]

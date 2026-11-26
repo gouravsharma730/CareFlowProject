@@ -12,6 +12,7 @@ __pycache__/
 *.sqlite
 *.db
 data/qdrant_store/
+data/careflow/memory_index/
 
 # Editor and OS files
 .vscode/

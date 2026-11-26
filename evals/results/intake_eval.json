@@ -1,0 +1,97 @@
+{
+  "model": "gemini/gemini-flash-lite-latest",
+  "run_at": "2026-11-26T09:48:30.331476+00:00",
+  "records_total": 20,
+  "records_valid": 20,
+  "validation_success_rate": 1.0,
+  "field_accuracy": {
+    "urgency": 0.75,
+    "specialty": 1.0,
+    "seeks_clinical_advice": 0.95,
+    "missing_fields": 0.95
+  },
+  "by_channel": {
+    "web_form": {
+      "total": 5,
+      "valid": 5,
+      "all_correct": 4
+    },
+    "phone_transcript": {
+      "total": 5,
+      "valid": 5,
+      "all_correct": 4
+    },
+    "email": {
+      "total": 5,
+      "valid": 5,
+      "all_correct": 3
+    },
+    "sms": {
+      "total": 5,
+      "valid": 5,
+      "all_correct": 3
+    }
+  },
+  "problem_records": [
+    {
+      "record_id": "CAREFLOW-00001",
+      "mismatches": {
+        "urgency": {
+          "predicted": "Urgent",
+          "expected": "Emergent"
+        }
+      }
+    },
+    {
+      "record_id": "CAREFLOW-00002",
+      "mismatches": {
+        "urgency": {
+          "predicted": "Routine",
+          "expected": "Priority"
+        }
+      }
+    },
+    {
+      "record_id": "CAREFLOW-00006",
+      "mismatches": {
+        "urgency": {
+          "predicted": "Urgent",
+          "expected": "Priority"
+        }
+      }
+    },
+    {
+      "record_id": "CAREFLOW-00007",
+      "mismatches": {
+        "missing_fields": {
+          "predicted": [],
+          "expected": [
+            "specialty"
+          ]
+        }
+      }
+    },
+    {
+      "record_id": "CAREFLOW-00011",
+      "mismatches": {
+        "urgency": {
+          "predicted": "Urgent",
+          "expected": "Priority"
+        },
+        "seeks_clinical_advice": {
+          "predicted": true,
+          "expected": false
+        }
+      }
+    },
+    {
+      "record_id": "CAREFLOW-00017",
+      "mismatches": {
+        "urgency": {
+          "predicted": "Routine",
+          "expected": "Priority"
+        }
+      }
+    }
+  ]
+}

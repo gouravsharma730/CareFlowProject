@@ -1,0 +1,3 @@
+# Never change line endings inside binary files
+*.pdf binary
+*.sqlite binary
