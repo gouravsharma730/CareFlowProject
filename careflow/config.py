@@ -19,6 +19,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 LLM_MODEL = os.getenv("CAREFLOW_LLM_MODEL", "gemini/gemini-flash-lite-latest")
 LLM_TEMPERATURE = float(os.getenv("CAREFLOW_LLM_TEMPERATURE", "0.0"))
 LLM_TIMEOUT_SECONDS = int(os.getenv("CAREFLOW_LLM_TIMEOUT_SECONDS", "30"))
+MAX_REPAIR_ATTEMPTS = int(os.getenv("CAREFLOW_MAX_REPAIR_ATTEMPTS", "2"))
 
 # --- Folders ---
 DATA_DIR = Path(os.getenv("CAREFLOW_DATA_DIR", PROJECT_ROOT / "data"))
@@ -30,6 +31,7 @@ def summary() -> dict:
         "llm_model": LLM_MODEL,
         "llm_temperature": LLM_TEMPERATURE,
         "llm_timeout_seconds": LLM_TIMEOUT_SECONDS,
+        "max_repair_attempts": MAX_REPAIR_ATTEMPTS,
         "data_dir": str(DATA_DIR),
     }
 
