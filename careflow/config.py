@@ -39,6 +39,9 @@ MAX_AGENT_STEPS = int(os.getenv("CAREFLOW_MAX_AGENT_STEPS", "5"))
 # Longest value the agent may store for one patient preference.
 MAX_PREFERENCE_VALUE_LENGTH = int(os.getenv("CAREFLOW_MAX_PREFERENCE_VALUE_LENGTH", "100"))
 
+# Most recent events loaded into the prompt for one patient.
+MEMORY_CONTEXT_MAX_EVENTS = int(os.getenv("CAREFLOW_MEMORY_CONTEXT_MAX_EVENTS", "5"))
+
 # Where long-term memory is stored (survives restarts).
 MEMORY_DB_PATH = Path(
     os.getenv("CAREFLOW_MEMORY_DB", DATA_DIR / "memory" / "careflow_memory.sqlite")
