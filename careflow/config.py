@@ -26,7 +26,15 @@ LLM_RETRY_MAX_SECONDS = float(os.getenv("CAREFLOW_LLM_RETRY_MAX_SECONDS", "60"))
 
 # --- Folders ---
 DATA_DIR = Path(os.getenv("CAREFLOW_DATA_DIR", PROJECT_ROOT / "data"))
+MOCK_API_DIR = Path(
+    os.getenv("CAREFLOW_MOCK_API_DIR", DATA_DIR / "careflow" / "mock_api")
+)
 
+# Most appointment slots a tool may return, whatever the model asks for.
+MAX_SLOTS_RETURNED = int(os.getenv("CAREFLOW_MAX_SLOTS_RETURNED", "5"))
+
+# Most tool-calling rounds the agent may run for one request.
+MAX_AGENT_STEPS = int(os.getenv("CAREFLOW_MAX_AGENT_STEPS", "5"))
 
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
