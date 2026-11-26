@@ -89,7 +89,7 @@ def test_unknown_tool_and_bad_arguments_never_crash():
 
 def test_every_tool_has_a_readable_spec():
     schemas = tool_schemas()
-    assert len(schemas) == len(TOOLS) == 5
+    assert len(schemas) == len(TOOLS) == 6
     for schema in schemas:
         function = schema["function"]
         assert "_" in function["name"]  # verb_noun style

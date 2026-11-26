@@ -16,12 +16,14 @@ from dataclasses import dataclass
 from typing import Callable
 
 from careflow import config
+from careflow.memory_store import MemoryStore
 from careflow.mock_data import find_row, load_table
 
 logger = logging.getLogger(__name__)
 
 URGENCY_LEVELS = ("Routine", "Priority", "Urgent", "Emergent")
 APPOINTMENT_MODES = ("in_person", "telehealth")
+PREFERENCE_KEYS = ("reminder_channel", "language", "preferred_contact_time")
 
 
 def _error(error_code: str, message: str) -> dict:
@@ -265,6 +267,43 @@ def flag_for_human(patient_ref: str, reason: str, urgency: str = "Routine") -> d
         "reason": str(reason).strip(),
     }
 
+def save_patient_preference(
+    patient_ref: str, key: str, value: str, session_id: str | None = None
+) -> dict:
+    """Remember a stable communication preference for a patient.
+
+    Use when the patient states how they want to be contacted, such as
+    their reminder channel, their language, or the best time to call.
+    A new value for the same key replaces the old one. Never store
+    symptoms, diagnoses, medications or any other clinical information.
+
+    Args:
+        patient_ref: Patient reference such as "MHP-P-00000".
+        key: One of "reminder_channel", "language",
+            "preferred_contact_time".
+        value: The preference in a few words, e.g. "SMS in Telugu".
+
+    Returns:
+        On success: status "saved" with the stored key and value.
+        On failure: error_code INVALID_ARGUMENT or PATIENT_NOT_FOUND.
+    """
+    # session_id is filled in by the system, never by the model.
+    if key not in PREFERENCE_KEYS:
+        return _error("INVALID_ARGUMENT", f"key must be one of {list(PREFERENCE_KEYS)}.")
+    value = str(value).strip()
+    if not value:
+        return _error("INVALID_ARGUMENT", "value must not be empty.")
+    if len(value) > config.MAX_PREFERENCE_VALUE_LENGTH:
+        return _error(
+            "INVALID_ARGUMENT",
+            f"value must be at most {config.MAX_PREFERENCE_VALUE_LENGTH} characters.",
+        )
+    if find_row("patients", patient_ref=patient_ref) is None:
+        return _error("PATIENT_NOT_FOUND", f"No patient with reference {patient_ref}.")
+    MemoryStore().remember_fact(patient_ref, key, value, session_id=session_id)
+    return {"success": True, "status": "saved", "key": key, "value": value}
+
+
 
 @dataclass(frozen=True)
 class Tool:
@@ -366,7 +405,26 @@ TOOLS: dict[str, Tool] = {
                         "description": "How quickly a human should respond.",
                     },
                 },
-                "required": ["patient_ref", "reason"],
+                                "required": ["patient_ref", "reason"],
+            },
+        ),
+        Tool(
+            save_patient_preference,
+            {
+                "type": "object",
+                "properties": {
+                    "patient_ref": _PATIENT_REF,
+                    "key": {
+                        "type": "string",
+                        "enum": list(PREFERENCE_KEYS),
+                        "description": "Which preference to store.",
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "The preference in a few words, e.g. SMS in Telugu.",
+                    },
+                },
+                "required": ["patient_ref", "key", "value"],
             },
         ),
     ]
@@ -378,13 +436,20 @@ def tool_schemas() -> list[dict]:
     return [tool.schema() for tool in TOOLS.values()]
 
 
-def execute_tool(name: str, arguments: dict) -> dict:
-    """Run one tool by name. Never raises: problems come back as errors."""
+def execute_tool(name: str, arguments: dict, session_id: str | None = None) -> dict:
+    """Run one tool by name. Never raises: problems come back as errors.
+
+    session_id is supplied by the system. Any session_id the model puts
+    in the arguments is discarded.
+    """
     tool = TOOLS.get(name)
     if tool is None:
         return _error("UNKNOWN_TOOL", f"There is no tool called '{name}'.")
     if not isinstance(arguments, dict):
         return _error("INVALID_ARGUMENT", "Tool arguments must be a JSON object.")
+    arguments = {key: value for key, value in arguments.items() if key != "session_id"}
+    if "session_id" in inspect.signature(tool.function).parameters:
+        arguments["session_id"] = session_id
     try:
         inspect.signature(tool.function).bind(**arguments)
     except TypeError as error:
