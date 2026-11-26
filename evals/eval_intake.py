@@ -80,7 +80,7 @@ def main():
         elif mismatches:
             failures.append({"record_id": record["record_id"], "mismatches": mismatches})
         print(f"{number}/{len(records)} {record['record_id']}: {correct_here}/{len(CHECKED_FIELDS)} fields correct")
-        time.sleep(0.5)  # be gentle with the API rate limit
+        time.sleep(4.5)  # free tier allows 15 requests per minute
 
     total = len(records)
     summary = {
