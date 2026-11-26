@@ -35,6 +35,10 @@ MAX_SLOTS_RETURNED = int(os.getenv("CAREFLOW_MAX_SLOTS_RETURNED", "5"))
 
 # Most tool-calling rounds the agent may run for one request.
 MAX_AGENT_STEPS = int(os.getenv("CAREFLOW_MAX_AGENT_STEPS", "5"))
+# Where long-term memory is stored (survives restarts).
+MEMORY_DB_PATH = Path(
+    os.getenv("CAREFLOW_MEMORY_DB", DATA_DIR / "memory" / "careflow_memory.sqlite")
+)
 
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
