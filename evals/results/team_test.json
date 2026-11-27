@@ -1,0 +1,212 @@
+{
+  "run_at": "2026-11-27T11:47:27+00:00",
+  "llm_model": "gemini/gemini-flash-lite-latest",
+  "checks": {
+    "insurance_routed_to_insurance_agent": true,
+    "insurance_agent_used_tools": true,
+    "insurance_agent_used_only_its_own_tools": true,
+    "insurance_reviewed_before_answer": true,
+    "insurance_answered": true,
+    "referral_routed_to_referral_agent": true,
+    "referral_agent_used_tools": true,
+    "referral_agent_used_only_its_own_tools": true,
+    "referral_reviewed_before_answer": true,
+    "referral_answered": true,
+    "clinical_paused_for_human": true,
+    "no_escalation_before_approval": true,
+    "resumed_in_a_different_process": true,
+    "clinical_escalated_exactly_once": true
+  },
+  "all_passed": true,
+  "llm_requests_total": 9,
+  "steps": [
+    {
+      "step": "insurance_question",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T114548-insurance",
+        "status": "done",
+        "route": "finalize",
+        "stop_reason": "answered",
+        "final_answer": "An MRI of your knee does require pre-approval on your Meridian Silver plan, with an approval window of 3 business days. The estimated out-of-pocket cost for this procedure is $110.00. Please note that this is only an estimate and not a guarantee of coverage.",
+        "escalation": null,
+        "audit": [
+          {
+            "event": "intake_done",
+            "at": "2026-11-27T11:45:59+00:00",
+            "urgency": "Routine",
+            "specialty": "Orthopaedics",
+            "seeks_clinical_advice": false,
+            "agent": "intake"
+          },
+          {
+            "event": "supervisor_routed",
+            "route": "insurance_agent",
+            "decided_by": "rule",
+            "hops": 1,
+            "at": "2026-11-27T11:45:59+00:00",
+            "agent": "supervisor"
+          },
+          {
+            "event": "draft_written",
+            "agent": "insurance",
+            "at": "2026-11-27T11:46:13+00:00",
+            "tools": [
+              "check_preauthorization",
+              "calculate_copay"
+            ],
+            "stop_reason": "final_answer"
+          },
+          {
+            "event": "review",
+            "verdict": "approve",
+            "issues": [],
+            "revisions": 0,
+            "at": "2026-11-27T11:46:13+00:00",
+            "agent": "safety"
+          }
+        ],
+        "pid": 27920,
+        "llm_requests": 4
+      }
+    },
+    {
+      "step": "referral_question",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T114548-referral",
+        "status": "done",
+        "route": "finalize",
+        "stop_reason": "answered",
+        "final_answer": "Your referral (ID: MHP-R-00001) for Gastroenterology has been accepted. Under the Routine urgency band, the referral SLA is 5 business days, with the SLA due date on 2026-05-05.",
+        "escalation": null,
+        "audit": [
+          {
+            "event": "intake_done",
+            "at": "2026-11-27T11:46:32+00:00",
+            "urgency": "Routine",
+            "specialty": null,
+            "seeks_clinical_advice": false,
+            "agent": "intake"
+          },
+          {
+            "event": "supervisor_routed",
+            "route": "referral_agent",
+            "decided_by": "rule",
+            "hops": 1,
+            "at": "2026-11-27T11:46:32+00:00",
+            "agent": "supervisor"
+          },
+          {
+            "event": "draft_written",
+            "agent": "referral",
+            "at": "2026-11-27T11:46:47+00:00",
+            "tools": [
+              "get_referral_status"
+            ],
+            "stop_reason": "final_answer"
+          },
+          {
+            "event": "review",
+            "verdict": "approve",
+            "issues": [],
+            "revisions": 0,
+            "at": "2026-11-27T11:46:47+00:00",
+            "agent": "safety"
+          }
+        ],
+        "pid": 17176,
+        "llm_requests": 4
+      }
+    },
+    {
+      "step": "clinical_question",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T114548-clinical",
+        "status": "paused",
+        "interrupt": {
+          "type": "clinical_escalation_approval",
+          "question": "Send this request to the clinical triage queue?",
+          "patient_ref": "MHP-P-00000",
+          "channel": "sms",
+          "message": "I've had headaches since starting my new tablets. Should I stop taking them?",
+          "urgency": "Routine",
+          "specialty": "Neurology",
+          "proposed_action": "Create a Priority-Clinical Routing ticket for a licensed clinician",
+          "allowed_decisions": [
+            "approve",
+            "reject",
+            "edit"
+          ],
+          "attempt": 1,
+          "previous_error": null
+        },
+        "pid": 8244,
+        "llm_requests": 1
+      }
+    },
+    {
+      "step": "clinical_resume_approve_new_process",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T114548-clinical",
+        "status": "done",
+        "route": "human_approval",
+        "stop_reason": "escalated",
+        "final_answer": "I am an automated assistant and I am not permitted to provide medical advice, interpret health information, or answer questions about your care. I have passed your question to our clinical team, and a licensed clinician will contact you.",
+        "escalation": {
+          "id": 2,
+          "thread_id": "20261127T114548-clinical",
+          "patient_ref": "MHP-P-00000",
+          "urgency": "Routine",
+          "reason": "Medication side-effect question needs a clinician",
+          "approved_by": "Nurse Rao",
+          "created_at": "2026-11-27T11:47:27+00:00",
+          "newly_created": true
+        },
+        "audit": [
+          {
+            "event": "intake_done",
+            "at": "2026-11-27T11:47:13+00:00",
+            "urgency": "Routine",
+            "specialty": "Neurology",
+            "seeks_clinical_advice": true,
+            "agent": "intake"
+          },
+          {
+            "event": "supervisor_routed",
+            "route": "safety_review",
+            "decided_by": "rule",
+            "hops": 1,
+            "at": "2026-11-27T11:47:13+00:00",
+            "agent": "supervisor"
+          },
+          {
+            "event": "review",
+            "verdict": "escalate",
+            "at": "2026-11-27T11:47:13+00:00",
+            "agent": "safety"
+          },
+          {
+            "event": "approval_decision",
+            "at": "2026-11-27T11:47:27+00:00",
+            "decision": "approve",
+            "approver": "Nurse Rao",
+            "reason": "Medication side-effect question needs a clinician",
+            "urgency": null
+          },
+          {
+            "event": "escalated",
+            "at": "2026-11-27T11:47:27+00:00",
+            "ticket_id": 2,
+            "urgency": "Routine",
+            "newly_created": true
+          }
+        ],
+        "pid": 2428,
+        "llm_requests": 0
+      }
+    }
+  ]
+}
