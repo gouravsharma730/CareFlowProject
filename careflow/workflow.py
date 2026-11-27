@@ -403,8 +403,9 @@ def thread_status(graph, thread_id: str) -> dict:
     }
 
 
-def main(argv=None) -> None:
-    parser = argparse.ArgumentParser(description="Run the CareFlow workflow.")
+def main(argv=None, build=None, description="Run the CareFlow workflow.") -> None:
+    """Command line for a checkpointed graph (the workflow, or the agent team)."""
+    parser = argparse.ArgumentParser(description=description)
     sub = parser.add_subparsers(dest="command", required=True)
 
     start = sub.add_parser("start", help="start a new request")
@@ -425,7 +426,7 @@ def main(argv=None) -> None:
     status.add_argument("--thread", required=True)
 
     args = parser.parse_args(argv)
-    graph = build_graph(open_checkpointer())
+    graph = (build or build_graph)(open_checkpointer())
     if args.command == "start":
         output = start_request(graph, args.thread, {
             "patient_ref": args.patient, "channel": args.channel,

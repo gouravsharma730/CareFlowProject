@@ -8,7 +8,7 @@ import json
 
 import pytest
 
-from careflow.mcp_client import CareFlowMCP
+from careflow.mcp_client import CareFlowMCP, llm_friendly_schema
 from careflow.tools import get_referral_status
 
 EXPECTED_TOOLS = {
@@ -94,3 +94,15 @@ def test_referral_status_lists_a_patients_referrals():
 def test_referral_status_errors():
     assert get_referral_status("MHP-P-99999")["error_code"] == "PATIENT_NOT_FOUND"
     assert get_referral_status("MHP-P-00000")["referrals"] == []
+
+
+
+
+def test_optional_fields_are_simplified_for_the_llm(ehr):
+    slots = next(s for s in ehr.tool_schemas()
+                 if s["function"]["name"] == "find_appointment_slots")
+    mode = slots["function"]["parameters"]["properties"]["mode"]
+    assert mode == {"enum": ["in_person", "telehealth"], "type": "string",
+                    "description": "Optional appointment mode."}
+    assert llm_friendly_schema({"title": "x", "type": "integer", "minimum": 1}) == \
+        {"type": "integer", "minimum": 1}

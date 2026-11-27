@@ -46,6 +46,28 @@ def server_parameters(extra_env: dict | None = None) -> StdioServerParameters:
         env=env,
     )
 
+def llm_friendly_schema(schema):
+    """Simplify a JSON schema for LLM providers with limited schema support.
+
+    An optional field ("anyOf": [X, {"type": "null"}]) becomes plain X, and
+    "title" and "default" are dropped. Types, enums, ranges, patterns and
+    descriptions are kept. The MCP server still validates every argument
+    against the full schema, so nothing is lost.
+    """
+    if isinstance(schema, list):
+        return [llm_friendly_schema(item) for item in schema]
+    if not isinstance(schema, dict):
+        return schema
+    schema = dict(schema)
+    options = schema.get("anyOf")
+    if isinstance(options, list):
+        non_null = [o for o in options if o.get("type") != "null"]
+        if len(non_null) == 1:
+            schema.pop("anyOf")
+            schema = {**non_null[0], **schema}
+    return {key: llm_friendly_schema(value) for key, value in schema.items()
+            if key not in ("title", "default")}
+
 
 class CareFlowMCP:
     """A synchronous handle on one MCP session."""
@@ -138,7 +160,7 @@ class CareFlowMCP:
                 "function": {
                     "name": tool.name,
                     "description": tool.description,
-                    "parameters": tool.inputSchema,
+                    "parameters": llm_friendly_schema(tool.inputSchema),
                 },
             }
             for tool in self.list_tools()

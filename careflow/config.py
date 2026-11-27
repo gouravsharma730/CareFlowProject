@@ -108,6 +108,14 @@ GRAPH_RECURSION_LIMIT = int(os.getenv("CAREFLOW_GRAPH_RECURSION_LIMIT", "25"))
 # How many invalid approver replies are allowed before the case is put on hold.
 MAX_APPROVAL_ATTEMPTS = int(os.getenv("CAREFLOW_MAX_APPROVAL_ATTEMPTS", "3"))
 
+
+# --- Agent team (M6) ---
+# Most times the supervisor may hand work to an agent in one request.
+MAX_TEAM_HOPS = int(os.getenv("CAREFLOW_MAX_TEAM_HOPS", "4"))
+
+# Most times the safety reviewer may send a draft back for revision.
+MAX_REVISIONS = int(os.getenv("CAREFLOW_MAX_REVISIONS", "2"))
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {
