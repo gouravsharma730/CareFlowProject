@@ -267,6 +267,52 @@ def flag_for_human(patient_ref: str, reason: str, urgency: str = "Routine") -> d
         "reason": str(reason).strip(),
     }
 
+def get_referral_status(patient_ref: str, referral_id: str | None = None) -> dict:
+    """List a patient's referrals with their status and deadlines.
+
+    Use when the patient asks where their referral is, whether it was
+    accepted, or when they should hear back. Use referral_id to look at
+    one referral only. This only reads referrals; it never changes them.
+
+    Args:
+        patient_ref: Patient reference such as "MHP-P-00000".
+        referral_id: Optional referral id such as "MHP-R-00001".
+
+    Returns:
+        On success: a list of referrals (referral_id, to_specialty,
+        urgency, raised_on, status, procedure_code, preauth_status,
+        sla_due_on), newest first. The list may be empty.
+        On failure: error_code PATIENT_NOT_FOUND or REFERRAL_NOT_FOUND.
+    """
+    if find_row("patients", patient_ref=patient_ref) is None:
+        return _error("PATIENT_NOT_FOUND", f"No patient with reference {patient_ref}.")
+    rows = [
+        row for row in load_table("referrals")
+        if row["patient_ref"] == patient_ref
+        and (referral_id is None or row["referral_id"] == referral_id)
+    ]
+    if referral_id is not None and not rows:
+        return _error(
+            "REFERRAL_NOT_FOUND",
+            f"No referral {referral_id} for patient {patient_ref}.",
+        )
+    referrals = []
+    for row in sorted(rows, key=lambda r: r["raised_on"], reverse=True):
+        detail = find_row("referral_details", referral_id=row["referral_id"]) or {}
+        referrals.append(
+            {
+                "referral_id": row["referral_id"],
+                "to_specialty": row["to_specialty"],
+                "urgency": row["urgency"],
+                "raised_on": row["raised_on"],
+                "status": row["status"],
+                "procedure_code": detail.get("procedure_code"),
+                "preauth_status": detail.get("preauth_status"),
+                "sla_due_on": detail.get("sla_due_on"),
+            }
+        )
+    return {"success": True, "patient_ref": patient_ref, "referrals": referrals}
+
 def save_patient_preference(
     patient_ref: str, key: str, value: str, session_id: str | None = None
 ) -> dict:
