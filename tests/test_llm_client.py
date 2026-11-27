@@ -60,7 +60,7 @@ def test_gives_up_after_max_retries(monkeypatch):
         )
 
     monkeypatch.setattr(llm_client, "completion", always_busy)
-    with pytest.raises(litellm.ServiceUnavailableError):
+    with pytest.raises(llm_client.LLMUnavailable):
         llm_client.call_llm([{"role": "user", "content": "hi"}])
     assert len(attempts) == llm_client.config.LLM_MAX_RETRIES + 1
 

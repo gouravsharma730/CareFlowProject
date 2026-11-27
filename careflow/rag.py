@@ -20,7 +20,7 @@ import re
 from pydantic import BaseModel, Field, ValidationError
 
 from careflow import config, tracing
-from careflow.llm_client import call_llm
+from careflow.llm_client import LLMUnavailable, call_llm
 from careflow.retriever import retrieve
 
 logger = logging.getLogger(__name__)
@@ -169,7 +169,11 @@ def answer_question(question: str, retriever=None, llm=None) -> RagResult:
     problem = "unknown error"
     attempts = 0
     for attempts in range(1, config.MAX_REPAIR_ATTEMPTS + 2):
-        reply_text = ask(messages, json_mode=True)
+        try:
+            reply_text = ask(messages, json_mode=True)
+        except LLMUnavailable as error:
+            logger.warning("RAG answer skipped: %s", error)
+            return dont_know("the language model is unavailable", attempts)
         try:
             reply = GroundedAnswer.model_validate(json.loads(reply_text))
             problem = check_answer(reply, chunks)

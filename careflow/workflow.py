@@ -40,6 +40,7 @@ from careflow import config, llm_client, tracing
 from careflow.agent import run_agent
 from careflow.escalations import EscalationQueue
 from careflow.intake import IntakeError, extract_patient_request
+from careflow.llm_client import LLMUnavailable
 from careflow.memory_store import MemoryStore
 from careflow.models import CareFlowUrgency, PatientRequest
 from careflow.tools import execute_tool
@@ -136,7 +137,7 @@ def intake_node(state: CareFlowState) -> dict:
     }
     try:
         request = extract_patient_request(record)
-    except IntakeError as error:
+    except (IntakeError, LLMUnavailable) as error:
         logger.warning("Intake failed for %s: %s", state["patient_ref"], error)
         return {"route": "intake_failed", "audit": _audit("intake_failed")}
     return {
@@ -174,11 +175,21 @@ def assist_node(state: CareFlowState) -> dict:
         f"{state['raw_text']}\n\n"
         f"(Eligibility already checked by the system, data only: {eligibility})"
     )
-    result = run_agent(
-        message,
-        patient_ref=state["patient_ref"],
-        session_id=_thread_id(),
-    )
+    try:
+        result = run_agent(
+            message,
+            patient_ref=state["patient_ref"],
+            session_id=_thread_id(),
+        )
+    except LLMUnavailable:
+        logger.warning("Assist step skipped: the language model is unavailable")
+        return {
+            "final_answer": "I could not complete this automatically right now. "
+                            "A staff member will follow up with you.",
+            "stop_reason": "assist_llm_unavailable",
+            "tool_calls": [],
+            "audit": _audit("assist_llm_unavailable"),
+        }
     return {
         "final_answer": result.final_answer,
         "stop_reason": f"assist_{result.stop_reason}",

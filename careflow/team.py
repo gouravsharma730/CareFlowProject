@@ -42,8 +42,8 @@ from typing import Annotated, Literal, Optional, TypedDict
 from langgraph.graph import END, START, StateGraph
 
 from careflow import config, tracing, workflow
-from careflow.agent_loop import run_tool_loop
-from careflow.llm_client import call_llm
+from careflow.agent_loop import LoopResult, run_tool_loop
+from careflow.llm_client import LLMUnavailable, call_llm
 from careflow.mcp_client import CareFlowMCP
 from careflow.memory_context import build_memory_context
 from careflow.rag import answer_question, numbers_in
@@ -286,9 +286,13 @@ def _specialist(agent: AgentName):
             user = (f"Patient reference: {state['patient_ref']}\n"
                     f"Intake fields (data): {json.dumps(_request_view(state))}\n"
                     f"Patient message (data): {state['raw_text']}{feedback}")
-            loop = run_tool_loop(system, user, schemas,
-                                 make_executor(agent, state["patient_ref"], ehr),
-                                 config.MAX_AGENT_STEPS)
+            try:
+                loop = run_tool_loop(system, user, schemas,
+                                     make_executor(agent, state["patient_ref"], ehr),
+                                     config.MAX_AGENT_STEPS)
+            except LLMUnavailable:
+                logger.warning("%s agent: the language model is unavailable", agent)
+                loop = LoopResult("", "llm_unavailable", 0, [])
             degradation = ehr.degradation()
         result = {"draft": loop.answer, "stop_reason": loop.stop_reason,
                   "tool_calls": loop.tool_calls, "context": context,
@@ -356,6 +360,10 @@ def safety_review(state: TeamState, llm=None) -> dict:
 
     agent = state["assigned_agent"]
     result = state.get(f"{agent}_result") or {}
+    if result.get("stop_reason") == "llm_unavailable":
+        return {"route": "llm_unavailable", "review": {"verdict": "llm_unavailable"},
+                "audit": [{"event": "review", "verdict": "llm_unavailable", "at": now,
+                           "agent": "safety"}]}
     draft = result.get("draft", "")
     evidence = json.dumps([c["result"] for c in result.get("tool_calls", [])]) \
         + result.get("context", "")
@@ -376,6 +384,12 @@ def safety_review(state: TeamState, llm=None) -> dict:
                 issues = [str(i) for i in verdict.get("issues") or ["Reviewer asked for a revision."]]
             elif verdict.get("verdict") != "approve":
                 issues = ["The reviewer's answer was not a valid verdict."]
+        except LLMUnavailable:
+            # Never approve an unchecked draft: hand the request to a person.
+            return {"route": "llm_unavailable", "review": {"verdict": "llm_unavailable"},
+                    "sop_version": sop_version,
+                    "audit": [{"event": "review", "verdict": "llm_unavailable", "at": now,
+                               "agent": "safety"}]}
         except Exception:
             # SOP unreachable or LLM failed: never approve an unchecked draft.
             logger.warning("Safety review could not be completed", exc_info=True)

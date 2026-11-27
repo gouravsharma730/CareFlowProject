@@ -29,6 +29,11 @@ LLM_MIN_SECONDS_BETWEEN_CALLS = float(
     os.getenv("CAREFLOW_LLM_MIN_SECONDS_BETWEEN_CALLS", "0")
 )
 
+
+# Backup model used only when the main model is unavailable (empty = off).
+# Every answer it produces is flagged used_fallback in the trace and stats.
+LLM_FALLBACK_MODEL = os.getenv("CAREFLOW_LLM_FALLBACK_MODEL", "")
+
 # --- Folders ---
 DATA_DIR = Path(os.getenv("CAREFLOW_DATA_DIR", PROJECT_ROOT / "data"))
 MOCK_API_DIR = Path(
