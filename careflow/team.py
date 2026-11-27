@@ -49,6 +49,7 @@ from careflow.agent_loop import LoopResult, run_tool_loop
 from careflow.llm_client import LLMUnavailable, call_llm
 from careflow.mcp_client import CareFlowMCP
 from careflow.memory_context import build_memory_context
+from careflow.mock_data import load_table
 from careflow.rag import answer_question, numbers_in
 from careflow.reliability import EHRUnavailable, ResilientEHR
 
@@ -183,6 +184,19 @@ def _request_view(state: TeamState) -> dict:
     request = state.get("request") or {}
     return {key: request.get(key) for key in
             ("patient_ref", "channel", "specialty", "insurance_id", "urgency", "missing_fields")}
+
+# A plan name as patients write it, e.g. "MERIDIAN-PLATINUM" or "Meridian Platinum".
+PLAN_MENTION = re.compile(r"\b(MERIDIAN|CIVIC)[\s-]+([A-Z]+)\b", re.I)
+CURRENCY_FIGURE = re.compile(r"\$\s?\d")
+NOT_PLAN_WORDS = {"HEALTH", "PARTNERS"}  # "Meridian Health Partners" is the clinic's name
+
+
+def unknown_plans(text: str) -> list[str]:
+    """Plan names in a message that are not in the clinic's plan list (mock EHR)."""
+    known = {row["plan_code"].upper() for row in load_table("plans")}
+    mentioned = {f"{a}-{b}".upper() for a, b in PLAN_MENTION.findall(text or "")
+                 if b.upper() not in NOT_PLAN_WORDS}
+    return sorted(mentioned - known)
 
 
 # ---- guardrails (code only, before and after the models) ----
@@ -329,6 +343,13 @@ def _specialist(agent: AgentName):
             user = (f"Patient reference: {state['patient_ref']}\n"
                     f"Intake fields (data): {json.dumps(_request_view(state))}\n"
                     f"Patient message (data): {state['raw_text']}{feedback}")
+            missing_plans = unknown_plans(state["raw_text"])
+            if missing_plans:
+                # Added after the baseline evaluation (golden case e12).
+                user += (f"\n\nSystem note: the clinic has no plan called "
+                         f"{', '.join(missing_plans)}. Say plainly that this plan does not "
+                         "exist in the clinic's records. Do not quote figures from any other "
+                         "plan in its place.")
             try:
                 loop = run_tool_loop(system, user, schemas,
                                      make_executor(agent, state["patient_ref"], ehr),
@@ -386,6 +407,13 @@ def deterministic_issues(draft: str, evidence: str, request_text: str) -> list[s
     if unsupported:
         shown = ", ".join(sorted(f"{n:g}" for n in unsupported))
         issues.append(f"The figures {shown} do not appear in any tool result.")
+    missing_plans = unknown_plans(request_text)
+    if missing_plans and CURRENCY_FIGURE.search(draft):
+        # Added after the baseline evaluation (golden case e12): a figure for another
+        # plan, given in answer to a question about a plan that does not exist,
+        # reads like an answer for that plan.
+        issues.append(f"The patient asked about {', '.join(missing_plans)}, which does not "
+                      "exist; the draft must say so and must not quote any dollar figure.")
     if not draft.strip():
         issues.append("The draft is empty.")
     return issues

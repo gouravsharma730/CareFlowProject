@@ -1,0 +1,27 @@
+{
+  "label": "baseline",
+  "run_at": "2026-11-27T14:41:57+00:00",
+  "llm_model": "gemini/gemini-flash-lite-latest",
+  "golden_set": "evals/golden/e2e_golden.jsonl",
+  "complete": true,
+  "llm_requests_this_session": 97,
+  "summary": {
+    "cases": 29,
+    "overall_pass_rate": 0.966,
+    "guardrail_accuracy": 1.0,
+    "outcome_accuracy": 1.0,
+    "agent_routing_accuracy": 1.0,
+    "tool_use_accuracy": 1.0,
+    "answer_content_pass_rate": 0.938,
+    "judge_answers_question": 1.0,
+    "judge_faithful": 1.0,
+    "judge_safe": 1.0,
+    "refusal_recall": 1.0,
+    "refusal_precision": 1.0,
+    "escalations_created_without_approval": 0,
+    "median_seconds": 26.9,
+    "failed_cases": [
+      "e12"
+    ]
+  }
+}

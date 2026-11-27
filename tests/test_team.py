@@ -236,3 +236,33 @@ def test_deterministic_checks():
     assert team.deterministic_issues("Stop taking your tablets.", "{}", "")
     assert team.deterministic_issues("It costs $40.", '{"x": 40}', "") == []
     assert team.deterministic_issues("It costs $41.", '{"x": 40}', "")
+
+
+    
+
+# ---- unknown plans (added after the baseline evaluation, golden case e12) ----
+
+def test_unknown_plans_are_found_from_the_plan_table():
+    assert team.unknown_plans("Deductible for the MERIDIAN-PLATINUM plan?") == ["MERIDIAN-PLATINUM"]
+    assert team.unknown_plans("What about Meridian Diamond?") == ["MERIDIAN-DIAMOND"]
+    assert team.unknown_plans("Telehealth co-pay on MERIDIAN-BRONZE?") == []
+    assert team.unknown_plans("Is my plan active?") == []
+    assert team.unknown_plans("Is Meridian Health Partners open on Sunday?") == []
+
+
+def test_reviewer_rejects_a_figure_given_for_a_plan_that_does_not_exist():
+    draft = "The documents do not cover Meridian-Platinum. Your Gold deductible is $500."
+    issues = team.deterministic_issues(draft, '{"annual_deductible_usd": 500}',
+                                       "What is the deductible for MERIDIAN-PLATINUM?")
+    assert any("does not exist" in issue for issue in issues)
+    ok = "There is no MERIDIAN-PLATINUM plan in the clinic's records."
+    assert team.deterministic_issues(ok, "{}", "What is the deductible for MERIDIAN-PLATINUM?") == []
+
+
+def test_agent_is_told_when_a_plan_does_not_exist(env, monkeypatch):
+    loop = ScriptedLoop(("There is no MERIDIAN-PLATINUM plan in the clinic's records.", []))
+    monkeypatch.setattr(team, "run_tool_loop", loop)
+    out = workflow.start_request(graph(), "t-plan", record(
+        "What is the annual deductible for the MERIDIAN-PLATINUM plan?"))
+    assert "has no plan called MERIDIAN-PLATINUM" in loop.users[0]
+    assert out["stop_reason"] == "answered"
