@@ -36,7 +36,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 from pydantic import BaseModel, Field, ValidationError
 
-from careflow import config
+from careflow import config, llm_client
 from careflow.agent import run_agent
 from careflow.escalations import EscalationQueue
 from careflow.intake import IntakeError, extract_patient_request
@@ -440,6 +440,7 @@ def main(argv=None) -> None:
     else:
         output = thread_status(graph, args.thread)
     output["pid"] = os.getpid()  # lets the restart test prove a new process was used
+    output["llm_requests"] = llm_client.CALL_STATS["requests"]
     print(json.dumps(output, indent=2, default=str))
 
 

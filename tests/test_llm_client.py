@@ -63,3 +63,37 @@ def test_gives_up_after_max_retries(monkeypatch):
     with pytest.raises(litellm.ServiceUnavailableError):
         llm_client.call_llm([{"role": "user", "content": "hi"}])
     assert len(attempts) == llm_client.config.LLM_MAX_RETRIES + 1
+
+    
+
+def test_calls_are_paced_when_a_gap_is_configured(monkeypatch):
+    """Two quick calls: the second one waits for the rest of the gap."""
+    clock = {"now": 1000.0}
+    sleeps = []
+
+    def fake_sleep(seconds):
+        sleeps.append(seconds)
+        clock["now"] += seconds
+
+    monkeypatch.setattr(llm_client.config, "LLM_MIN_SECONDS_BETWEEN_CALLS", 6.0)
+    monkeypatch.setattr(llm_client, "_last_request_at", 0.0)
+    monkeypatch.setattr(llm_client.time, "monotonic", lambda: clock["now"])
+    monkeypatch.setattr(llm_client.time, "sleep", fake_sleep)
+    monkeypatch.setattr(llm_client, "completion", lambda **kwargs: fake_success())
+
+    llm_client.call_llm([{"role": "user", "content": "first"}])
+    clock["now"] += 2.0  # the second call comes 2 seconds later
+    llm_client.call_llm([{"role": "user", "content": "second"}])
+    assert sleeps == [4.0]
+
+
+def test_no_pacing_by_default_and_requests_are_counted(monkeypatch):
+    sleeps = []
+    monkeypatch.setattr(llm_client.config, "LLM_MIN_SECONDS_BETWEEN_CALLS", 0.0)
+    monkeypatch.setattr(llm_client.time, "sleep", sleeps.append)
+    monkeypatch.setattr(llm_client, "completion", lambda **kwargs: fake_success())
+    before = llm_client.CALL_STATS["requests"]
+    llm_client.call_llm([{"role": "user", "content": "a"}])
+    llm_client.call_llm([{"role": "user", "content": "b"}])
+    assert sleeps == []
+    assert llm_client.CALL_STATS["requests"] == before + 2

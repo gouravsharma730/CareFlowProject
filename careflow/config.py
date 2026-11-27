@@ -23,6 +23,11 @@ MAX_REPAIR_ATTEMPTS = int(os.getenv("CAREFLOW_MAX_REPAIR_ATTEMPTS", "2"))
 LLM_MAX_RETRIES = int(os.getenv("CAREFLOW_LLM_MAX_RETRIES", "5"))
 LLM_RETRY_BASE_SECONDS = float(os.getenv("CAREFLOW_LLM_RETRY_BASE_SECONDS", "2"))
 LLM_RETRY_MAX_SECONDS = float(os.getenv("CAREFLOW_LLM_RETRY_MAX_SECONDS", "60"))
+# Minimum gap between two LLM requests from one process (0 = no pacing).
+# On a free tier, set it to 60 / your requests-per-minute limit, plus a margin.
+LLM_MIN_SECONDS_BETWEEN_CALLS = float(
+    os.getenv("CAREFLOW_LLM_MIN_SECONDS_BETWEEN_CALLS", "0")
+)
 
 # --- Folders ---
 DATA_DIR = Path(os.getenv("CAREFLOW_DATA_DIR", PROJECT_ROOT / "data"))

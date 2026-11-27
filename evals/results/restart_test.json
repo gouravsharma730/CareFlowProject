@@ -1,0 +1,217 @@
+{
+  "run_at": "2026-11-27T11:02:06+00:00",
+  "checkpoint_db": "data\\checkpoints\\careflow_graph.sqlite",
+  "threads": {
+    "approve": "20261127T110010-approve",
+    "reject": "20261127T110010-reject",
+    "low_risk": "20261127T110010-lowrisk"
+  },
+  "checks": {
+    "clinical_request_paused": true,
+    "interrupt_explains_the_approval": true,
+    "no_escalation_before_approval": true,
+    "resumed_in_a_different_process": true,
+    "approved_run_completed": true,
+    "exactly_one_escalation_after_approve": true,
+    "second_resume_refused": true,
+    "still_exactly_one_escalation": true,
+    "rejected_run_completed": true,
+    "no_escalation_after_reject": true,
+    "low_risk_did_not_pause": true
+  },
+  "all_passed": true,
+  "llm_requests_total": 4,
+  "steps": [
+    {
+      "step": "1_start_clinical",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T110010-approve",
+        "status": "paused",
+        "interrupt": {
+          "type": "clinical_escalation_approval",
+          "question": "Send this request to the clinical triage queue?",
+          "patient_ref": "MHP-P-00000",
+          "channel": "sms",
+          "message": "I've felt dizzy since I started the new blood pressure tablets. Should I stop taking them?",
+          "urgency": "Urgent",
+          "specialty": "Cardiology",
+          "proposed_action": "Create a Priority-Clinical Routing ticket for a licensed clinician",
+          "allowed_decisions": [
+            "approve",
+            "reject",
+            "edit"
+          ],
+          "attempt": 1,
+          "previous_error": null
+        },
+        "pid": 8008,
+        "llm_requests": 1
+      }
+    },
+    {
+      "step": "2_resume_approve_new_process",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T110010-approve",
+        "status": "done",
+        "route": "clinical",
+        "stop_reason": "escalated",
+        "final_answer": "I am an automated assistant and I am not permitted to provide medical advice, interpret health information, or answer questions about your care. I have passed your question to our clinical team, and a licensed clinician will contact you.",
+        "escalation": {
+          "id": 1,
+          "thread_id": "20261127T110010-approve",
+          "patient_ref": "MHP-P-00000",
+          "urgency": "Urgent",
+          "reason": "Medication side-effect question needs a clinician",
+          "approved_by": "Nurse Rao",
+          "created_at": "2026-11-27T11:00:45+00:00",
+          "newly_created": true
+        },
+        "audit": [
+          {
+            "event": "intake_done",
+            "at": "2026-11-27T11:00:28+00:00",
+            "urgency": "Urgent",
+            "specialty": "Cardiology",
+            "seeks_clinical_advice": true
+          },
+          {
+            "event": "triaged",
+            "at": "2026-11-27T11:00:28+00:00",
+            "route": "clinical"
+          },
+          {
+            "event": "approval_decision",
+            "at": "2026-11-27T11:00:45+00:00",
+            "decision": "approve",
+            "approver": "Nurse Rao",
+            "reason": "Medication side-effect question needs a clinician",
+            "urgency": null
+          },
+          {
+            "event": "escalated",
+            "at": "2026-11-27T11:00:45+00:00",
+            "ticket_id": 1,
+            "urgency": "Urgent",
+            "newly_created": true
+          }
+        ],
+        "pid": 28056,
+        "llm_requests": 0
+      }
+    },
+    {
+      "step": "3_resume_again_is_refused",
+      "exit_code": 1,
+      "output": "module>\n    main()\n  File \"C:\\Users\\gosha\\Coding\\AI\\IITH\\Project\\CareFlowProject\\careflow\\workflow.py\", line 439, in main\n    output = resume_request(graph, args.thread, decision)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\gosha\\Coding\\AI\\IITH\\Project\\CareFlowProject\\careflow\\workflow.py\", line 386, in resume_request\n    raise ValueError(f\"Thread {thread_id} is not waiting for a decision.\")\nValueError: Thread 20261127T110010-approve is not waiting for a decision.\n"
+    },
+    {
+      "step": "4a_start_clinical_for_reject",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T110010-reject",
+        "status": "paused",
+        "interrupt": {
+          "type": "clinical_escalation_approval",
+          "question": "Send this request to the clinical triage queue?",
+          "patient_ref": "MHP-P-00000",
+          "channel": "sms",
+          "message": "I've felt dizzy since I started the new blood pressure tablets. Should I stop taking them?",
+          "urgency": "Urgent",
+          "specialty": "Cardiology",
+          "proposed_action": "Create a Priority-Clinical Routing ticket for a licensed clinician",
+          "allowed_decisions": [
+            "approve",
+            "reject",
+            "edit"
+          ],
+          "attempt": 1,
+          "previous_error": null
+        },
+        "pid": 28804,
+        "llm_requests": 1
+      }
+    },
+    {
+      "step": "4b_resume_reject_new_process",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T110010-reject",
+        "status": "done",
+        "route": "clinical",
+        "stop_reason": "escalation_rejected",
+        "final_answer": "I am an automated assistant and I am not permitted to provide medical advice, interpret health information, or answer questions about your care. A member of our team has reviewed your message and will follow up with you.",
+        "escalation": null,
+        "audit": [
+          {
+            "event": "intake_done",
+            "at": "2026-11-27T11:01:21+00:00",
+            "urgency": "Urgent",
+            "specialty": "Cardiology",
+            "seeks_clinical_advice": true
+          },
+          {
+            "event": "triaged",
+            "at": "2026-11-27T11:01:21+00:00",
+            "route": "clinical"
+          },
+          {
+            "event": "approval_decision",
+            "at": "2026-11-27T11:01:38+00:00",
+            "decision": "reject",
+            "approver": "Nurse Rao",
+            "reason": "Already handled by phone",
+            "urgency": null
+          },
+          {
+            "event": "closed_without_escalation",
+            "at": "2026-11-27T11:01:38+00:00"
+          }
+        ],
+        "pid": 26484,
+        "llm_requests": 0
+      }
+    },
+    {
+      "step": "5_low_risk_request",
+      "exit_code": 0,
+      "output": {
+        "thread_id": "20261127T110010-lowrisk",
+        "status": "done",
+        "route": "assist",
+        "stop_reason": "assist_final_answer",
+        "final_answer": "Yes, your insurance is currently **active**. \n\nHere are the details of your plan:\n* **Plan:** Meridian Gold (`MERIDIAN-GOLD`)\n* **Annual Deductible:** $500.00 ($0.00 met so far)\n* **Coinsurance Rate:** 20%\n* **Specialist Copay:** $25.00\n* **Telehealth Copay:** $10.00\n\nPlease let me know if you would like to check the estimated cost of a specific procedure or find an appointment slot!",
+        "escalation": null,
+        "audit": [
+          {
+            "event": "intake_done",
+            "at": "2026-11-27T11:01:56+00:00",
+            "urgency": "Routine",
+            "specialty": null,
+            "seeks_clinical_advice": false
+          },
+          {
+            "event": "triaged",
+            "at": "2026-11-27T11:01:56+00:00",
+            "route": "admin"
+          },
+          {
+            "event": "eligibility_checked",
+            "at": "2026-11-27T11:01:56+00:00",
+            "success": true,
+            "error_code": null
+          },
+          {
+            "event": "assist_done",
+            "at": "2026-11-27T11:02:05+00:00",
+            "tools": [],
+            "agent_stop_reason": "final_answer"
+          }
+        ],
+        "pid": 17184,
+        "llm_requests": 2
+      }
+    }
+  ]
+}

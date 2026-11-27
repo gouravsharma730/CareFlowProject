@@ -3,25 +3,30 @@
 All LLM calls in the project go through this file. To switch provider,
 change CAREFLOW_LLM_MODEL in .env (no code edit needed).
 
-Temporary provider errors (rate limit, overload, timeout) are retried
-with exponential backoff: 2s, 4s, 8s, ... Permanent errors (wrong model
-name, bad API key) are NOT retried and are raised immediately.
+Rate limits (free tiers) are handled in two ways:
+  1. Pacing: if CAREFLOW_LLM_MIN_SECONDS_BETWEEN_CALLS is set, calls in
+     this process are spaced at least that far apart, so we stay under
+     the provider's requests-per-minute limit instead of hitting it.
+  2. Retries: temporary provider errors (rate limit, overload, timeout)
+     are retried with exponential backoff: 2s, 4s, 8s, ... Permanent
+     errors (wrong model name, bad API key) are NOT retried.
+
+Every request sent is counted in CALL_STATS, so a script can report how
+many calls it used (useful for daily quotas).
 """
 
-import litellm
-from litellm import completion
-
-# Stop LiteLLM printing its "Provider List / Give Feedback" help text on
-# every error. Our own logger still records each error and retry.
-litellm.suppress_debug_info = True
-
 import logging
+import threading
 import time
 
 import litellm
 from litellm import completion
 
 from careflow import config
+
+# Stop LiteLLM printing its "Provider List / Give Feedback" help text on
+# every error. Our own logger still records each error and retry.
+litellm.suppress_debug_info = True
 
 logger = logging.getLogger(__name__)
 
@@ -34,15 +39,36 @@ TRANSIENT_ERRORS = (
     litellm.APIConnectionError,
 )
 
+# Requests sent to the provider by this process (retries included).
+CALL_STATS = {"requests": 0, "retries": 0}
+
+_pace_lock = threading.Lock()
+_last_request_at = 0.0
+
+
+def _wait_for_turn() -> None:
+    """Keep at least LLM_MIN_SECONDS_BETWEEN_CALLS between two requests."""
+    global _last_request_at
+    gap = config.LLM_MIN_SECONDS_BETWEEN_CALLS
+    with _pace_lock:
+        if gap > 0:
+            wait = _last_request_at + gap - time.monotonic()
+            if wait > 0:
+                logger.debug("Pacing LLM calls: waiting %.1fs", wait)
+                time.sleep(wait)
+        _last_request_at = time.monotonic()
+        CALL_STATS["requests"] += 1
+
 
 def _complete_with_retry(**kwargs):
-    """Call the provider, retrying temporary errors with backoff."""
+    """Call the provider, pacing requests and retrying temporary errors."""
     kwargs.update(
         model=config.LLM_MODEL,
         temperature=config.LLM_TEMPERATURE,
         timeout=config.LLM_TIMEOUT_SECONDS,
     )
     for attempt in range(config.LLM_MAX_RETRIES + 1):
+        _wait_for_turn()
         try:
             return completion(**kwargs)
         except TRANSIENT_ERRORS as error:
@@ -54,6 +80,7 @@ def _complete_with_retry(**kwargs):
                     type(error).__name__,
                 )
                 raise
+            CALL_STATS["retries"] += 1
             wait = min(
                 config.LLM_RETRY_BASE_SECONDS * (2**attempt),
                 config.LLM_RETRY_MAX_SECONDS,
