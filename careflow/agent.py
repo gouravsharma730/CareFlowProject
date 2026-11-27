@@ -17,6 +17,7 @@ from careflow import config
 from careflow.llm_client import chat_with_tools
 from careflow.memory_context import build_memory_context
 from careflow.memory_store import MemoryStore
+from careflow.procedures import find_procedure, format_procedure, procedure_label
 from careflow.tools import execute_tool, tool_schemas
 
 logger = logging.getLogger(__name__)
@@ -72,6 +73,7 @@ class AgentResult:
     stop_reason: str
     steps: int
     tool_calls: list[dict] = field(default_factory=list)
+    procedure: str | None = None
 
 
 def _record_event(tool_name: str, result: dict, session_id):
@@ -115,6 +117,11 @@ def run_agent(
             system_content = f"{SYSTEM_PROMPT}\n{context}"
         user_content = f"Patient reference: {patient_ref}\n{user_message}"
 
+    procedure = find_procedure(user_message)
+    procedure_used = procedure_label(procedure) if procedure else None
+    if procedure:
+        system_content = f"{system_content}\n\n{format_procedure(procedure)}"
+
     messages = [
         {"role": "system", "content": system_content},
         {"role": "user", "content": user_content},
@@ -131,6 +138,7 @@ def run_agent(
                 stop_reason=STOP_FINAL,
                 steps=step,
                 tool_calls=executed,
+                procedure=procedure_used,
             )
 
         messages.append(
@@ -170,6 +178,7 @@ def run_agent(
         stop_reason=STOP_MAX_STEPS,
         steps=config.MAX_AGENT_STEPS,
         tool_calls=executed,
+        procedure=procedure_used,
     )
 
 
