@@ -19,7 +19,7 @@ import re
 
 from pydantic import BaseModel, Field, ValidationError
 
-from careflow import config
+from careflow import config, tracing
 from careflow.llm_client import call_llm
 from careflow.retriever import retrieve
 
@@ -149,7 +149,10 @@ def answer_question(question: str, retriever=None, llm=None) -> RagResult:
     search = retriever or (lambda query, top_k: retrieve(query, top_k))
     ask = llm or call_llm
 
-    chunks = search(question, config.RETRIEVAL_TOP_K)
+    with tracing.span("policy.retrieve", as_type="retriever",
+                      mode=config.RETRIEVAL_MODE) as observation:
+        chunks = search(question, config.RETRIEVAL_TOP_K)
+        observation.update(retrieved=len(chunks))
     retrieved_ids = [chunk["chunk_id"] for chunk in chunks]
 
     def dont_know(reason, attempts):

@@ -36,7 +36,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 from pydantic import BaseModel, Field, ValidationError
 
-from careflow import config, llm_client
+from careflow import config, llm_client, tracing
 from careflow.agent import run_agent
 from careflow.escalations import EscalationQueue
 from careflow.intake import IntakeError, extract_patient_request
@@ -326,7 +326,7 @@ def build_graph(checkpointer=None):
         ("escalate", escalate_node), ("close_rejected", close_rejected_node),
         ("hold", hold_node), ("handoff", handoff_node),
     ]:
-        graph.add_node(name, node)
+        graph.add_node(name, tracing.traced_node(name, node))
 
     graph.add_edge(START, "intake")
     graph.add_conditional_edges("intake", route_after_intake, ["triage", "handoff"])
@@ -340,7 +340,7 @@ def build_graph(checkpointer=None):
     )
     for name in ("assist", "emergency", "escalate", "close_rejected", "hold", "handoff"):
         graph.add_edge(name, END)
-    return graph.compile(checkpointer=checkpointer)
+    return graph.compile(checkpointer=checkpointer, name="careflow-workflow")
 
 
 def open_checkpointer(path=None) -> SqliteSaver:
@@ -375,7 +375,8 @@ def start_request(graph, thread_id: str, record: dict) -> dict:
     """Run a new request until it finishes or pauses for approval."""
     if graph.get_state(_run_config(thread_id)).values:
         raise ValueError(f"Thread {thread_id} already exists; use a new thread_id.")
-    result = graph.invoke(record, _run_config(thread_id))
+    with tracing.request_trace(graph.name, thread_id, record.get("patient_ref"), step="start"):
+        result = graph.invoke(record, _run_config(thread_id))
     return _summarise(graph, thread_id, result)
 
 
@@ -384,7 +385,9 @@ def resume_request(graph, thread_id: str, decision: dict) -> dict:
     snapshot = graph.get_state(_run_config(thread_id))
     if not snapshot.next:
         raise ValueError(f"Thread {thread_id} is not waiting for a decision.")
-    result = graph.invoke(Command(resume=decision), _run_config(thread_id))
+    with tracing.request_trace(graph.name, thread_id, snapshot.values.get("patient_ref"),
+                               step="resume", decision=str(decision.get("decision"))):
+        result = graph.invoke(Command(resume=decision), _run_config(thread_id))
     return _summarise(graph, thread_id, result)
 
 

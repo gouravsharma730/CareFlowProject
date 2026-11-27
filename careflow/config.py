@@ -136,6 +136,21 @@ BREAKER_RESET_SECONDS = float(os.getenv("CAREFLOW_BREAKER_RESET_SECONDS", "10"))
 # Off by default: a stale answer is only acceptable if the clinic agrees.
 EHR_STALE_FALLBACK = os.getenv("CAREFLOW_EHR_STALE_FALLBACK", "false").lower() == "true"
 
+
+# --- Tracing and KPIs (M7) ---
+# Langfuse tracing is on when the LANGFUSE_* keys are set (see .env.example).
+TRACING_ENABLED = os.getenv("CAREFLOW_TRACING", "true").lower() == "true"
+LANGFUSE_CONFIGURED = bool(os.getenv("LANGFUSE_PUBLIC_KEY") and os.getenv("LANGFUSE_SECRET_KEY"))
+TRACING_ENVIRONMENT = os.getenv("CAREFLOW_ENVIRONMENT", "development")
+
+# Patient references are never sent to the tracer; a salted hash is used instead.
+TRACE_USER_SALT = os.getenv("CAREFLOW_TRACE_USER_SALT", "careflow-local-salt")
+
+# Every span is also written here (one JSON line each) for the KPI report.
+TELEMETRY_PATH = Path(
+    os.getenv("CAREFLOW_TELEMETRY_PATH", DATA_DIR / "telemetry" / "events.jsonl")
+)
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {

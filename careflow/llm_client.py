@@ -22,7 +22,7 @@ import time
 import litellm
 from litellm import completion
 
-from careflow import config
+from careflow import config, tracing
 
 # Stop LiteLLM printing its "Provider List / Give Feedback" help text on
 # every error. Our own logger still records each error and retry.
@@ -70,7 +70,11 @@ def _complete_with_retry(**kwargs):
     for attempt in range(config.LLM_MAX_RETRIES + 1):
         _wait_for_turn()
         try:
-            return completion(**kwargs)
+            with tracing.span("llm.completion", as_type="generation", model=config.LLM_MODEL,
+                              attempt=attempt + 1, tools=len(kwargs.get("tools") or [])) as gen:
+                response = completion(**kwargs)
+                gen.record_llm_response(response, config.LLM_MODEL)
+            return response
         except TRANSIENT_ERRORS as error:
             if attempt == config.LLM_MAX_RETRIES:
                 logger.error(

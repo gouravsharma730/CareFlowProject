@@ -17,3 +17,7 @@ data/careflow/memory_index/
 # Editor and OS files
 .vscode/
 .DS_Store
+
+
+# Local telemetry (KPI source data)
+data/telemetry/

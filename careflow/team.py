@@ -41,7 +41,7 @@ from typing import Annotated, Literal, Optional, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
-from careflow import config, workflow
+from careflow import config, tracing, workflow
 from careflow.agent_loop import run_tool_loop
 from careflow.llm_client import call_llm
 from careflow.mcp_client import CareFlowMCP
@@ -143,6 +143,15 @@ def make_executor(agent: AgentName, patient_ref: str, ehr) -> callable:
     """Run one tool call for an agent, inside that agent's boundary."""
 
     def execute(name: str, arguments: dict) -> dict:
+        with tracing.span(f"tool.{name}", as_type="tool", tool=name) as observation:
+            result = _execute(name, arguments)
+            observation.update(error_code=result.get("error_code"),
+                               used_fallback=bool(result.get("used_fallback")))
+            if not result.get("success"):
+                observation.warn(str(result.get("error_code")))
+            return result
+
+    def _execute(name: str, arguments: dict) -> dict:
         if name not in ALLOWED_TOOLS[agent]:
             return {"success": False, "error_code": "TOOL_NOT_ALLOWED",
                     "message": f"The {agent} agent may not use '{name}'."}
@@ -409,21 +418,29 @@ def route_after_review(state: TeamState) -> str:
 
 # ---- graph ----
 
+AGENT_NODES = {"intake", "supervisor", "insurance_agent", "referral_agent", "safety_review"}
+
+
 def build_team_graph(checkpointer=None):
+    nodes = {
+        "intake": bounded("intake", intake_agent),
+        "supervisor": bounded("supervisor", supervisor),
+        "insurance_agent": bounded("insurance_agent", _specialist("insurance")),
+        "referral_agent": bounded("referral_agent", _specialist("referral")),
+        "safety_review": bounded("safety_review", safety_review),
+        "finalize": bounded("finalize", finalize),
+        # The M5 human-in-the-loop and end nodes, reused unchanged.
+        "human_approval": workflow.human_approval_node,
+        "escalate": workflow.escalate_node,
+        "close_rejected": workflow.close_rejected_node,
+        "hold": workflow.hold_node,
+        "emergency": workflow.emergency_node,
+        "handoff": workflow.handoff_node,
+    }
     graph = StateGraph(TeamState)
-    graph.add_node("intake", bounded("intake", intake_agent))
-    graph.add_node("supervisor", bounded("supervisor", supervisor))
-    graph.add_node("insurance_agent", bounded("insurance_agent", _specialist("insurance")))
-    graph.add_node("referral_agent", bounded("referral_agent", _specialist("referral")))
-    graph.add_node("safety_review", bounded("safety_review", safety_review))
-    graph.add_node("finalize", bounded("finalize", finalize))
-    # The M5 human-in-the-loop and end nodes, reused unchanged.
-    graph.add_node("human_approval", workflow.human_approval_node)
-    graph.add_node("escalate", workflow.escalate_node)
-    graph.add_node("close_rejected", workflow.close_rejected_node)
-    graph.add_node("hold", workflow.hold_node)
-    graph.add_node("emergency", workflow.emergency_node)
-    graph.add_node("handoff", workflow.handoff_node)
+    for name, node in nodes.items():
+        graph.add_node(name, tracing.traced_node(
+            name, node, as_type="agent" if name in AGENT_NODES else "span"))
 
     graph.add_edge(START, "intake")
     graph.add_conditional_edges("intake", route_after_intake, ["supervisor", "handoff"])
@@ -438,7 +455,7 @@ def build_team_graph(checkpointer=None):
                                 ["escalate", "close_rejected", "hold", "human_approval"])
     for name in ("finalize", "escalate", "close_rejected", "hold", "emergency", "handoff"):
         graph.add_edge(name, END)
-    return graph.compile(checkpointer=checkpointer)
+    return graph.compile(checkpointer=checkpointer, name="careflow-team")
 
 
 if __name__ == "__main__":
