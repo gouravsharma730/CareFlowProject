@@ -50,6 +50,9 @@ Memory rules:
 - When the patient states how they want to be contacted (reminder
   channel, language, best time to call), save it with
   save_patient_preference. Never save clinical information.
+- If the patient asks what happened before or what was done last time,
+  answer from the saved notes only. Do not call any tool for that
+  question. If there are no saved notes, say you have no earlier record.
 """
 
 STOP_FINAL = "final_answer"
