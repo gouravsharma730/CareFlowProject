@@ -55,6 +55,13 @@ MEMORY_DB_PATH = Path(
 MAX_HISTORY_TURNS = int(os.getenv("CAREFLOW_MAX_HISTORY_TURNS", "6"))
 MAX_HISTORY_CHARS = int(os.getenv("CAREFLOW_MAX_HISTORY_CHARS", "4000"))
 
+# --- Retrieval (M4) ---
+# Folder with the policy documents (index.json, markdown/, pdf/).
+CORPUS_DIR = Path(os.getenv("CAREFLOW_CORPUS_DIR", DATA_DIR / "careflow" / "corpus"))
+
+# Largest chunk, in characters. A longer section is split between
+# paragraphs; a single paragraph or table is never cut in the middle.
+CHUNK_MAX_CHARS = int(os.getenv("CAREFLOW_CHUNK_MAX_CHARS", "1200"))
 
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
