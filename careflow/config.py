@@ -166,6 +166,15 @@ INJECTION_BLOCK_SCORE = int(os.getenv("CAREFLOW_INJECTION_BLOCK_SCORE", "2"))
 MAX_MESSAGE_CHARS = int(os.getenv("CAREFLOW_MAX_MESSAGE_CHARS", "2000"))
 MAX_REPLY_CHARS = int(os.getenv("CAREFLOW_MAX_REPLY_CHARS", "1500"))
 
+
+# --- API service (M8) ---
+API_HOST = os.getenv("CAREFLOW_API_HOST", "127.0.0.1")
+API_PORT = int(os.getenv("CAREFLOW_API_PORT", "8000"))
+
+# Staff token required to approve or reject paused clinical requests over the API.
+# Empty = the approvals endpoint is switched off.
+STAFF_API_TOKEN = os.getenv("CAREFLOW_STAFF_API_TOKEN", "")
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {
