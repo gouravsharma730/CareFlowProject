@@ -1,0 +1,186 @@
+{
+  "run_at": "2026-11-27T12:23:36+00:00",
+  "seed": 7,
+  "calls_per_scenario": 300,
+  "scenarios": {
+    "flaky": {
+      "fault_rate": 0.25,
+      "outage": null
+    },
+    "outage": {
+      "fault_rate": 0.1,
+      "outage": [
+        100,
+        160
+      ]
+    }
+  },
+  "settings": {
+    "max_retries": 2,
+    "retry_base_seconds": 0.5,
+    "breaker_failure_threshold": 3,
+    "breaker_reset_seconds": 10.0,
+    "stale_fallback": false
+  },
+  "results": {
+    "flaky": {
+      "before": {
+        "success_rate": 0.727,
+        "correct": 218,
+        "wrong_answers": 0,
+        "failed_with_used_fallback_flag": 0,
+        "failed_without_flag": 82,
+        "attempts_sent_to_clinic_system": 300
+      },
+      "retries_only": {
+        "success_rate": 0.967,
+        "correct": 290,
+        "wrong_answers": 0,
+        "failed_with_used_fallback_flag": 10,
+        "failed_without_flag": 0,
+        "attempts_sent_to_clinic_system": 403,
+        "retries": 103,
+        "fast_failed_by_open_breaker": 0,
+        "breaker_opened": 0
+      },
+      "after": {
+        "success_rate": 0.967,
+        "correct": 290,
+        "wrong_answers": 0,
+        "failed_with_used_fallback_flag": 10,
+        "failed_without_flag": 0,
+        "attempts_sent_to_clinic_system": 403,
+        "retries": 103,
+        "fast_failed_by_open_breaker": 0,
+        "breaker_opened": 0
+      }
+    },
+    "outage": {
+      "before": {
+        "success_rate": 0.73,
+        "correct": 219,
+        "wrong_answers": 0,
+        "failed_with_used_fallback_flag": 0,
+        "failed_without_flag": 81,
+        "attempts_sent_to_clinic_system": 300
+      },
+      "retries_only": {
+        "success_rate": 0.8,
+        "correct": 240,
+        "wrong_answers": 0,
+        "failed_with_used_fallback_flag": 60,
+        "failed_without_flag": 0,
+        "attempts_sent_to_clinic_system": 457,
+        "retries": 157,
+        "fast_failed_by_open_breaker": 0,
+        "breaker_opened": 0
+      },
+      "after": {
+        "success_rate": 0.793,
+        "correct": 238,
+        "wrong_answers": 0,
+        "failed_with_used_fallback_flag": 62,
+        "failed_without_flag": 0,
+        "attempts_sent_to_clinic_system": 278,
+        "retries": 32,
+        "fast_failed_by_open_breaker": 54,
+        "breaker_opened": 6
+      }
+    }
+  },
+  "cooldown_sweep": [
+    {
+      "seed": 7,
+      "cooldown_seconds": 5,
+      "success_rate": 0.777,
+      "attempts": 277
+    },
+    {
+      "seed": 7,
+      "cooldown_seconds": 10,
+      "success_rate": 0.793,
+      "attempts": 278
+    },
+    {
+      "seed": 7,
+      "cooldown_seconds": 15,
+      "success_rate": 0.793,
+      "attempts": 276
+    },
+    {
+      "seed": 7,
+      "cooldown_seconds": 30,
+      "success_rate": 0.593,
+      "attempts": 213
+    },
+    {
+      "seed": 7,
+      "cooldown_seconds": null,
+      "success_rate": 0.8,
+      "attempts": 457,
+      "note": "no breaker"
+    },
+    {
+      "seed": 11,
+      "cooldown_seconds": 5,
+      "success_rate": 0.793,
+      "attempts": 289
+    },
+    {
+      "seed": 11,
+      "cooldown_seconds": 10,
+      "success_rate": 0.793,
+      "attempts": 284
+    },
+    {
+      "seed": 11,
+      "cooldown_seconds": 15,
+      "success_rate": 0.793,
+      "attempts": 281
+    },
+    {
+      "seed": 11,
+      "cooldown_seconds": 30,
+      "success_rate": 0.793,
+      "attempts": 279
+    },
+    {
+      "seed": 11,
+      "cooldown_seconds": null,
+      "success_rate": 0.8,
+      "attempts": 444,
+      "note": "no breaker"
+    },
+    {
+      "seed": 23,
+      "cooldown_seconds": 5,
+      "success_rate": 0.793,
+      "attempts": 282
+    },
+    {
+      "seed": 23,
+      "cooldown_seconds": 10,
+      "success_rate": 0.793,
+      "attempts": 276
+    },
+    {
+      "seed": 23,
+      "cooldown_seconds": 15,
+      "success_rate": 0.793,
+      "attempts": 274
+    },
+    {
+      "seed": 23,
+      "cooldown_seconds": 30,
+      "success_rate": 0.793,
+      "attempts": 272
+    },
+    {
+      "seed": 23,
+      "cooldown_seconds": null,
+      "success_rate": 0.8,
+      "attempts": 442,
+      "note": "no breaker"
+    }
+  ]
+}

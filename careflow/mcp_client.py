@@ -28,7 +28,8 @@ from careflow import config
 
 logger = logging.getLogger(__name__)
 
-CALL_TIMEOUT_SECONDS = 60
+# Starting the server and opening the session may take longer than one call.
+OPEN_TIMEOUT_SECONDS = 60
 
 
 class MCPToolError(Exception):
@@ -86,7 +87,7 @@ class CareFlowMCP:
     def __enter__(self) -> "CareFlowMCP":
         self._thread.start()
         try:
-            self._run(self._start_owner())
+            self._run(self._start_owner(), timeout=OPEN_TIMEOUT_SECONDS)
         except Exception:
             self.close()
             raise
@@ -138,9 +139,13 @@ class CareFlowMCP:
             self._loop.call_soon_threadsafe(self._loop.stop)
             self._thread.join(timeout=5)
 
-    def _run(self, coroutine):
+    def _run(self, coroutine, timeout: float | None = None):
         future = asyncio.run_coroutine_threadsafe(coroutine, self._loop)
-        return future.result(timeout=CALL_TIMEOUT_SECONDS)
+        try:
+            return future.result(timeout=timeout or config.EHR_CALL_TIMEOUT_SECONDS)
+        except TimeoutError:
+            future.cancel()
+            raise
 
     def _require_session(self) -> ClientSession:
         if self._session is None:
@@ -171,6 +176,10 @@ class CareFlowMCP:
         """Call one tool. Never raises for tool problems: they come back as errors."""
         try:
             result = self._run(self._require_session().call_tool(name, arguments))
+        except TimeoutError:
+            logger.warning("MCP call %s timed out", name)
+            return {"success": False, "error_code": "EHR_TIMEOUT",
+                    "message": "The clinic system did not answer in time."}
         except Exception as error:
             logger.warning("MCP call %s failed: %s", name, type(error).__name__)
             return {"success": False, "error_code": "MCP_UNAVAILABLE",

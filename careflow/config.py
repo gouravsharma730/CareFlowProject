@@ -116,6 +116,26 @@ MAX_TEAM_HOPS = int(os.getenv("CAREFLOW_MAX_TEAM_HOPS", "4"))
 # Most times the safety reviewer may send a draft back for revision.
 MAX_REVISIONS = int(os.getenv("CAREFLOW_MAX_REVISIONS", "2"))
 
+
+# --- Clinic system (MCP) reliability (M7) ---
+# Longest wait for one call to the clinic system before it counts as failed.
+EHR_CALL_TIMEOUT_SECONDS = float(os.getenv("CAREFLOW_EHR_CALL_TIMEOUT_SECONDS", "10"))
+
+# Retries for temporary failures (unreachable, timeout), with exponential backoff.
+EHR_MAX_RETRIES = int(os.getenv("CAREFLOW_EHR_MAX_RETRIES", "2"))
+EHR_RETRY_BASE_SECONDS = float(os.getenv("CAREFLOW_EHR_RETRY_BASE_SECONDS", "0.5"))
+
+# Circuit breaker: open after this many failed calls in a row, try again after
+# the cooldown. 10 s was chosen from the fault-injection sweep
+# (evals/results/fault_injection.json): 30 s blocked too many requests after
+# the system had recovered.
+BREAKER_FAILURE_THRESHOLD = int(os.getenv("CAREFLOW_BREAKER_FAILURE_THRESHOLD", "3"))
+BREAKER_RESET_SECONDS = float(os.getenv("CAREFLOW_BREAKER_RESET_SECONDS", "10"))
+
+# Serve the last good answer (marked stale) when the clinic system is down.
+# Off by default: a stale answer is only acceptable if the clinic agrees.
+EHR_STALE_FALLBACK = os.getenv("CAREFLOW_EHR_STALE_FALLBACK", "false").lower() == "true"
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {

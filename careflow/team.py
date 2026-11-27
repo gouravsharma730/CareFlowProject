@@ -47,6 +47,7 @@ from careflow.llm_client import call_llm
 from careflow.mcp_client import CareFlowMCP
 from careflow.memory_context import build_memory_context
 from careflow.rag import answer_question, numbers_in
+from careflow.reliability import EHRUnavailable, ResilientEHR
 
 logger = logging.getLogger(__name__)
 
@@ -258,11 +259,15 @@ def _specialist(agent: AgentName):
             feedback = ("\n\nThe safety reviewer rejected your previous draft. Fix these "
                         f"problems: {json.dumps(review.get('issues', []))}")
         context = ""
-        with open_ehr() as ehr:
+        with open_ehr() as session:
+            ehr = ResilientEHR(session)  # retries, circuit breaker, flagged fallback
             system = SPECIALIST_PROMPTS[agent]
             if agent == "referral":
-                context = ehr.read_resource("careflow://urgency-bands")  # MCP resource
-                system = system.format(urgency_bands=context)
+                try:
+                    context = ehr.read_resource("careflow://urgency-bands")  # MCP resource
+                except EHRUnavailable:
+                    logger.warning("Urgency bands unavailable; continuing without them")
+                system = system.format(urgency_bands=context or "(not available right now)")
             memory = build_memory_context(state["patient_ref"])
             if memory:
                 system = f"{system}\n\n{memory}"
@@ -275,12 +280,14 @@ def _specialist(agent: AgentName):
             loop = run_tool_loop(system, user, schemas,
                                  make_executor(agent, state["patient_ref"], ehr),
                                  config.MAX_AGENT_STEPS)
+            degradation = ehr.degradation()
         result = {"draft": loop.answer, "stop_reason": loop.stop_reason,
-                  "tool_calls": loop.tool_calls, "context": context}
+                  "tool_calls": loop.tool_calls, "context": context,
+                  "used_fallback": degradation["fallbacks"] > 0}
         return {result_key: result,
                 "audit": [{"event": "draft_written", "agent": agent, "at": workflow._now(),
                            "tools": [c["tool"] for c in loop.tool_calls],
-                           "stop_reason": loop.stop_reason}]}
+                           "stop_reason": loop.stop_reason, "ehr": degradation}]}
 
     node.__name__ = f"{agent}_agent"
     return node
@@ -346,10 +353,10 @@ def safety_review(state: TeamState, llm=None) -> dict:
     issues = deterministic_issues(draft, evidence, state["raw_text"])
     sop_version = None
     if not issues:
-        with open_ehr() as ehr:
-            sop = ehr.read_resource("policy://clinical-escalation")  # MCP resource
-        sop_version = f"clinical-escalation ({len(sop)} chars)"
         try:
+            with open_ehr() as session:
+                sop = ResilientEHR(session).read_resource("policy://clinical-escalation")
+            sop_version = f"clinical-escalation ({len(sop)} chars)"
             verdict = json.loads((llm or call_llm)([
                 {"role": "system", "content": REVIEW_PROMPT.replace("{sop}", sop)},
                 {"role": "user", "content": json.dumps({
@@ -361,7 +368,8 @@ def safety_review(state: TeamState, llm=None) -> dict:
             elif verdict.get("verdict") != "approve":
                 issues = ["The reviewer's answer was not a valid verdict."]
         except Exception:
-            logger.warning("Safety review LLM failed", exc_info=True)
+            # SOP unreachable or LLM failed: never approve an unchecked draft.
+            logger.warning("Safety review could not be completed", exc_info=True)
             issues = ["The safety review could not be completed."]
 
     revisions = state.get("revisions", 0)
