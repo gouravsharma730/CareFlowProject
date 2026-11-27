@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-11-27T11:47:27+00:00",
+  "run_at": "2026-11-27T13:33:25+00:00",
   "llm_model": "gemini/gemini-flash-lite-latest",
   "checks": {
     "insurance_routed_to_insurance_agent": true,
@@ -24,16 +24,16 @@
       "step": "insurance_question",
       "exit_code": 0,
       "output": {
-        "thread_id": "20261127T114548-insurance",
+        "thread_id": "20261127T133144-insurance",
         "status": "done",
         "route": "finalize",
         "stop_reason": "answered",
-        "final_answer": "An MRI of your knee does require pre-approval on your Meridian Silver plan, with an approval window of 3 business days. The estimated out-of-pocket cost for this procedure is $110.00. Please note that this is only an estimate and not a guarantee of coverage.",
+        "final_answer": "Yes, an MRI of your knee does require pre-authorisation on your Meridian Silver plan, with an approval window of 3 business days. The estimated out-of-pocket cost for this procedure is $110.00. This figure is an estimate and not a guarantee of coverage.",
         "escalation": null,
         "audit": [
           {
             "event": "intake_done",
-            "at": "2026-11-27T11:45:59+00:00",
+            "at": "2026-11-27T13:31:53+00:00",
             "urgency": "Routine",
             "specialty": "Orthopaedics",
             "seeks_clinical_advice": false,
@@ -44,29 +44,37 @@
             "route": "insurance_agent",
             "decided_by": "rule",
             "hops": 1,
-            "at": "2026-11-27T11:45:59+00:00",
+            "at": "2026-11-27T13:31:53+00:00",
             "agent": "supervisor"
           },
           {
             "event": "draft_written",
             "agent": "insurance",
-            "at": "2026-11-27T11:46:13+00:00",
+            "at": "2026-11-27T13:32:06+00:00",
             "tools": [
               "check_preauthorization",
               "calculate_copay"
             ],
-            "stop_reason": "final_answer"
+            "stop_reason": "final_answer",
+            "ehr": {
+              "calls": 2,
+              "attempts": 2,
+              "retries": 0,
+              "fallbacks": 0,
+              "fast_failed": 0,
+              "breaker_state": "closed"
+            }
           },
           {
             "event": "review",
             "verdict": "approve",
             "issues": [],
             "revisions": 0,
-            "at": "2026-11-27T11:46:13+00:00",
+            "at": "2026-11-27T13:32:06+00:00",
             "agent": "safety"
           }
         ],
-        "pid": 27920,
+        "pid": 22236,
         "llm_requests": 4
       }
     },
@@ -74,16 +82,16 @@
       "step": "referral_question",
       "exit_code": 0,
       "output": {
-        "thread_id": "20261127T114548-referral",
+        "thread_id": "20261127T133144-referral",
         "status": "done",
         "route": "finalize",
         "stop_reason": "answered",
-        "final_answer": "Your referral (ID: MHP-R-00001) for Gastroenterology has been accepted. Under the Routine urgency band, the referral SLA is 5 business days, with the SLA due date on 2026-05-05.",
+        "final_answer": "Your Gastroenterology referral (MHP-R-00001) was accepted on 2026-04-28. The pre-authorisation status is not required. The SLA due date is 2026-05-05.",
         "escalation": null,
         "audit": [
           {
             "event": "intake_done",
-            "at": "2026-11-27T11:46:32+00:00",
+            "at": "2026-11-27T13:32:29+00:00",
             "urgency": "Routine",
             "specialty": null,
             "seeks_clinical_advice": false,
@@ -94,28 +102,36 @@
             "route": "referral_agent",
             "decided_by": "rule",
             "hops": 1,
-            "at": "2026-11-27T11:46:32+00:00",
+            "at": "2026-11-27T13:32:29+00:00",
             "agent": "supervisor"
           },
           {
             "event": "draft_written",
             "agent": "referral",
-            "at": "2026-11-27T11:46:47+00:00",
+            "at": "2026-11-27T13:32:44+00:00",
             "tools": [
               "get_referral_status"
             ],
-            "stop_reason": "final_answer"
+            "stop_reason": "final_answer",
+            "ehr": {
+              "calls": 1,
+              "attempts": 1,
+              "retries": 0,
+              "fallbacks": 0,
+              "fast_failed": 0,
+              "breaker_state": "closed"
+            }
           },
           {
             "event": "review",
             "verdict": "approve",
             "issues": [],
             "revisions": 0,
-            "at": "2026-11-27T11:46:47+00:00",
+            "at": "2026-11-27T13:32:44+00:00",
             "agent": "safety"
           }
         ],
-        "pid": 17176,
+        "pid": 26184,
         "llm_requests": 4
       }
     },
@@ -123,7 +139,7 @@
       "step": "clinical_question",
       "exit_code": 0,
       "output": {
-        "thread_id": "20261127T114548-clinical",
+        "thread_id": "20261127T133144-clinical",
         "status": "paused",
         "interrupt": {
           "type": "clinical_escalation_approval",
@@ -142,7 +158,7 @@
           "attempt": 1,
           "previous_error": null
         },
-        "pid": 8244,
+        "pid": 11044,
         "llm_requests": 1
       }
     },
@@ -150,25 +166,25 @@
       "step": "clinical_resume_approve_new_process",
       "exit_code": 0,
       "output": {
-        "thread_id": "20261127T114548-clinical",
+        "thread_id": "20261127T133144-clinical",
         "status": "done",
         "route": "human_approval",
         "stop_reason": "escalated",
         "final_answer": "I am an automated assistant and I am not permitted to provide medical advice, interpret health information, or answer questions about your care. I have passed your question to our clinical team, and a licensed clinician will contact you.",
         "escalation": {
-          "id": 2,
-          "thread_id": "20261127T114548-clinical",
+          "id": 3,
+          "thread_id": "20261127T133144-clinical",
           "patient_ref": "MHP-P-00000",
           "urgency": "Routine",
           "reason": "Medication side-effect question needs a clinician",
           "approved_by": "Nurse Rao",
-          "created_at": "2026-11-27T11:47:27+00:00",
+          "created_at": "2026-11-27T13:33:23+00:00",
           "newly_created": true
         },
         "audit": [
           {
             "event": "intake_done",
-            "at": "2026-11-27T11:47:13+00:00",
+            "at": "2026-11-27T13:33:07+00:00",
             "urgency": "Routine",
             "specialty": "Neurology",
             "seeks_clinical_advice": true,
@@ -179,18 +195,18 @@
             "route": "safety_review",
             "decided_by": "rule",
             "hops": 1,
-            "at": "2026-11-27T11:47:13+00:00",
+            "at": "2026-11-27T13:33:07+00:00",
             "agent": "supervisor"
           },
           {
             "event": "review",
             "verdict": "escalate",
-            "at": "2026-11-27T11:47:13+00:00",
+            "at": "2026-11-27T13:33:07+00:00",
             "agent": "safety"
           },
           {
             "event": "approval_decision",
-            "at": "2026-11-27T11:47:27+00:00",
+            "at": "2026-11-27T13:33:23+00:00",
             "decision": "approve",
             "approver": "Nurse Rao",
             "reason": "Medication side-effect question needs a clinician",
@@ -198,13 +214,13 @@
           },
           {
             "event": "escalated",
-            "at": "2026-11-27T11:47:27+00:00",
-            "ticket_id": 2,
+            "at": "2026-11-27T13:33:23+00:00",
+            "ticket_id": 3,
             "urgency": "Routine",
             "newly_created": true
           }
         ],
-        "pid": 2428,
+        "pid": 11516,
         "llm_requests": 0
       }
     }

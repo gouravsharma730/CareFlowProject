@@ -1,0 +1,124 @@
+{
+  "run_at": "2026-11-27T13:34:40+00:00",
+  "source": "C:\\Users\\gosha\\Coding\\AI\\IITH\\Project\\CareFlowProject\\data\\telemetry\\events.jsonl",
+  "events": 32,
+  "model": "gemini/gemini-flash-lite-latest",
+  "cost_note": "LiteLLM list price for the model; the free tier is not charged.",
+  "overall": {
+    "requests": 3,
+    "llm_calls": 9,
+    "tokens": 9967,
+    "cost_usd": 0.004405,
+    "mean_request_latency_ms": 15798.9,
+    "requests_with_errors_rate": 0.0,
+    "tool_fallback_rate": 0.0
+  },
+  "per_agent": {
+    "insurance_agent": {
+      "runs": 1,
+      "latency_p50_ms": 13368.2,
+      "latency_p95_ms": 13368.2,
+      "llm_calls": 2,
+      "tokens_in": 2303,
+      "tokens_out": 137,
+      "cost_usd": 0.001033,
+      "tool_calls": 2,
+      "tool_error_rate": 0.0,
+      "fallback_rate": 0.0
+    },
+    "intake": {
+      "runs": 3,
+      "latency_p50_ms": 1555.2,
+      "latency_p95_ms": 1693.2,
+      "llm_calls": 3,
+      "tokens_in": 1499,
+      "tokens_out": 382,
+      "cost_usd": 0.001405,
+      "tool_calls": 0,
+      "tool_error_rate": null,
+      "fallback_rate": null
+    },
+    "referral_agent": {
+      "runs": 1,
+      "latency_p50_ms": 14096.1,
+      "latency_p95_ms": 14096.1,
+      "llm_calls": 2,
+      "tokens_in": 2221,
+      "tokens_out": 88,
+      "cost_usd": 0.000886,
+      "tool_calls": 1,
+      "tool_error_rate": 0.0,
+      "fallback_rate": 0.0
+    },
+    "safety_review": {
+      "runs": 3,
+      "latency_p50_ms": 6290.6,
+      "latency_p95_ms": 6938.8,
+      "llm_calls": 2,
+      "tokens_in": 3301,
+      "tokens_out": 36,
+      "cost_usd": 0.00108,
+      "tool_calls": 0,
+      "tool_error_rate": null,
+      "fallback_rate": null
+    },
+    "supervisor": {
+      "runs": 3,
+      "latency_p50_ms": 0.3,
+      "latency_p95_ms": 0.4,
+      "llm_calls": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "cost_usd": 0.0,
+      "tool_calls": 0,
+      "tool_error_rate": null,
+      "fallback_rate": null
+    }
+  },
+  "per_run": {
+    "20261127T133144-insurance": {
+      "llm_calls": 4,
+      "tokens": 4713,
+      "cost_usd": 0.002047,
+      "latency_ms": 22389.1,
+      "errors": 0,
+      "fallbacks": 0,
+      "steps": 1,
+      "agents": [
+        "insurance_agent",
+        "intake",
+        "safety_review",
+        "supervisor"
+      ]
+    },
+    "20261127T133144-referral": {
+      "llm_calls": 4,
+      "tokens": 4630,
+      "cost_usd": 0.001893,
+      "latency_ms": 22248.1,
+      "errors": 0,
+      "fallbacks": 0,
+      "steps": 1,
+      "agents": [
+        "intake",
+        "referral_agent",
+        "safety_review",
+        "supervisor"
+      ]
+    },
+    "20261127T133144-clinical": {
+      "llm_calls": 1,
+      "tokens": 624,
+      "cost_usd": 0.000464,
+      "latency_ms": 2759.6,
+      "errors": 0,
+      "fallbacks": 0,
+      "steps": 2,
+      "agents": [
+        "intake",
+        "safety_review",
+        "supervisor"
+      ]
+    }
+  }
+}
