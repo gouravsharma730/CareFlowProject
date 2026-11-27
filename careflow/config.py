@@ -86,6 +86,23 @@ RRF_K = int(os.getenv("CAREFLOW_RRF_K", "60"))
 # Cross-encoder reranker (runs locally through fastembed).
 RERANKER_MODEL = os.getenv("CAREFLOW_RERANKER_MODEL", "Xenova/ms-marco-MiniLM-L-6-v2")
 
+# --- Workflow (M5) ---
+# Where LangGraph saves each conversation's progress (survives restarts).
+CHECKPOINT_DB_PATH = Path(
+    os.getenv("CAREFLOW_CHECKPOINT_DB", DATA_DIR / "checkpoints" / "careflow_graph.sqlite")
+)
+
+# Mock clinic system: clinical escalations sent to the triage queue.
+OPERATIONS_DB_PATH = Path(
+    os.getenv("CAREFLOW_OPERATIONS_DB", DATA_DIR / "operations" / "careflow_ops.sqlite")
+)
+
+# Hard ceiling on graph steps for one run (LangGraph recursion_limit).
+GRAPH_RECURSION_LIMIT = int(os.getenv("CAREFLOW_GRAPH_RECURSION_LIMIT", "25"))
+
+# How many invalid approver replies are allowed before the case is put on hold.
+MAX_APPROVAL_ATTEMPTS = int(os.getenv("CAREFLOW_MAX_APPROVAL_ATTEMPTS", "3"))
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {
