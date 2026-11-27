@@ -30,14 +30,18 @@ MOCK_API_DIR = Path(
     os.getenv("CAREFLOW_MOCK_API_DIR", DATA_DIR / "careflow" / "mock_api")
 )
 
+# --- Agent and tool limits ---
 # Most appointment slots a tool may return, whatever the model asks for.
 MAX_SLOTS_RETURNED = int(os.getenv("CAREFLOW_MAX_SLOTS_RETURNED", "5"))
 
 # Most tool-calling rounds the agent may run for one request.
 MAX_AGENT_STEPS = int(os.getenv("CAREFLOW_MAX_AGENT_STEPS", "5"))
 
+# --- Memory ---
 # Longest value the agent may store for one patient preference.
-MAX_PREFERENCE_VALUE_LENGTH = int(os.getenv("CAREFLOW_MAX_PREFERENCE_VALUE_LENGTH", "100"))
+MAX_PREFERENCE_VALUE_LENGTH = int(
+    os.getenv("CAREFLOW_MAX_PREFERENCE_VALUE_LENGTH", "100")
+)
 
 # Most recent events loaded into the prompt for one patient.
 MEMORY_CONTEXT_MAX_EVENTS = int(os.getenv("CAREFLOW_MEMORY_CONTEXT_MAX_EVENTS", "5"))
@@ -47,6 +51,11 @@ MEMORY_DB_PATH = Path(
     os.getenv("CAREFLOW_MEMORY_DB", DATA_DIR / "memory" / "careflow_memory.sqlite")
 )
 
+# Working memory: how much of the current conversation is sent to the model.
+MAX_HISTORY_TURNS = int(os.getenv("CAREFLOW_MAX_HISTORY_TURNS", "6"))
+MAX_HISTORY_CHARS = int(os.getenv("CAREFLOW_MAX_HISTORY_CHARS", "4000"))
+
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {
@@ -54,14 +63,13 @@ def summary() -> dict:
         "llm_temperature": LLM_TEMPERATURE,
         "llm_timeout_seconds": LLM_TIMEOUT_SECONDS,
         "max_repair_attempts": MAX_REPAIR_ATTEMPTS,
+        "max_agent_steps": MAX_AGENT_STEPS,
+        "max_history_turns": MAX_HISTORY_TURNS,
         "data_dir": str(DATA_DIR),
+        "memory_db_path": str(MEMORY_DB_PATH),
     }
 
 
 if __name__ == "__main__":
     for key, value in summary().items():
         print(f"{key}: {value}")
-        
-# Working memory: how much of the current conversation is sent to the model.
-MAX_HISTORY_TURNS = int(os.getenv("CAREFLOW_MAX_HISTORY_TURNS", "6"))
-MAX_HISTORY_CHARS = int(os.getenv("CAREFLOW_MAX_HISTORY_CHARS", "4000"))

@@ -1,6 +1,6 @@
 {
   "model": "gemini/gemini-flash-lite-latest",
-  "run_at": "2026-11-26T11:18:39.568268+00:00",
+  "run_at": "2026-11-27T08:14:03.415077+00:00",
   "cases_total": 10,
   "cases_correct": 10,
   "tool_selection_accuracy": 1.0,
