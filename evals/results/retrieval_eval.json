@@ -1,0 +1,1200 @@
+{
+  "run_at": "2026-11-27T08:49:09+00:00",
+  "golden_set": "evals\\golden\\retrieval_golden.jsonl",
+  "questions_total": 17,
+  "questions_scored": 15,
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "reranker_model": "Xenova/ms-marco-MiniLM-L-6-v2",
+  "candidates_per_method": 10,
+  "rrf_k": 60,
+  "modes": {
+    "dense": {
+      "metrics": {
+        "mrr": 0.889,
+        "hit@1": 0.8,
+        "recall@1": 0.7,
+        "precision@1": 0.8,
+        "hit@3": 1.0,
+        "recall@3": 1.0,
+        "precision@3": 0.4,
+        "hit@5": 1.0,
+        "recall@5": 1.0,
+        "precision@5": 0.24,
+        "latency_median_ms": 43.2,
+        "latency_mean_ms": 50.8
+      },
+      "questions": [
+        {
+          "id": "r01",
+          "type": "exact_id",
+          "retrieved": [
+            "preauth-matrix#004",
+            "preauth-matrix#005",
+            "preauth-matrix#014",
+            "preauth-matrix#002",
+            "preauth-matrix#007"
+          ],
+          "relevant": [
+            "preauth-matrix#004"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r02",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#014",
+            "preauth-matrix#004",
+            "preauth-matrix#002",
+            "preauth-matrix#000",
+            "preauth-matrix#003"
+          ],
+          "relevant": [
+            "preauth-matrix#014"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r03",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#003",
+            "preauth-matrix#002",
+            "preauth-matrix#012",
+            "preauth-matrix#016",
+            "preauth-matrix#010"
+          ],
+          "relevant": [
+            "preauth-matrix#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r04",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#011",
+            "preauth-matrix#010",
+            "preauth-matrix#013",
+            "preauth-matrix#009",
+            "preauth-matrix#007"
+          ],
+          "relevant": [
+            "preauth-matrix#011"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r05",
+          "type": "paraphrase",
+          "retrieved": [
+            "preauth-matrix#002",
+            "preauth-matrix#003",
+            "preauth-matrix#013",
+            "preauth-matrix#009",
+            "preauth-matrix#010"
+          ],
+          "relevant": [
+            "preauth-matrix#002"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r06",
+          "type": "exact_id",
+          "retrieved": [
+            "preauth-matrix#016",
+            "preauth-matrix#001",
+            "preauth-matrix#017",
+            "preauth-matrix#000",
+            "preauth-matrix#009"
+          ],
+          "relevant": [
+            "preauth-matrix#001",
+            "preauth-matrix#016"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r07",
+          "type": "exact_id",
+          "retrieved": [
+            "copay-schedule#003",
+            "copay-schedule#002",
+            "copay-schedule#005",
+            "copay-schedule#001",
+            "preauth-matrix#002"
+          ],
+          "relevant": [
+            "copay-schedule#002",
+            "copay-schedule#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r08",
+          "type": "near_duplicate",
+          "retrieved": [
+            "copay-schedule#002",
+            "copay-schedule#005",
+            "copay-schedule#004",
+            "copay-schedule#003",
+            "preauth-matrix#002"
+          ],
+          "relevant": [
+            "copay-schedule#002"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r09",
+          "type": "paraphrase",
+          "retrieved": [
+            "copay-schedule#005",
+            "copay-schedule#004",
+            "copay-schedule#001",
+            "copay-schedule#002",
+            "copay-schedule#000"
+          ],
+          "relevant": [
+            "copay-schedule#004",
+            "copay-schedule#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r10",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#003",
+            "referral-policy#005",
+            "referral-policy#006",
+            "clinical-escalation#005",
+            "referral-policy#007"
+          ],
+          "relevant": [
+            "referral-policy#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r11",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#002",
+            "referral-policy#006",
+            "preauth-matrix#001",
+            "preauth-matrix#006",
+            "preauth-matrix#002"
+          ],
+          "relevant": [
+            "referral-policy#002"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r12",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#003",
+            "referral-policy#005",
+            "referral-policy#007",
+            "referral-policy#004",
+            "referral-policy#006"
+          ],
+          "relevant": [
+            "referral-policy#005"
+          ],
+          "first_relevant_rank": 2,
+          "reciprocal_rank": 0.5,
+          "hit@1": 0.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 0.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r13",
+          "type": "domain_must_have",
+          "retrieved": [
+            "clinical-escalation#005",
+            "clinical-escalation#006",
+            "clinical-escalation#003",
+            "clinical-escalation#002",
+            "clinical-escalation#007"
+          ],
+          "relevant": [
+            "clinical-escalation#006"
+          ],
+          "first_relevant_rank": 2,
+          "reciprocal_rank": 0.5,
+          "hit@1": 0.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 0.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r14",
+          "type": "paraphrase",
+          "retrieved": [
+            "clinical-escalation#001",
+            "clinical-escalation#003",
+            "clinical-escalation#005",
+            "clinical-escalation#004",
+            "clinical-escalation#002"
+          ],
+          "relevant": [
+            "clinical-escalation#005"
+          ],
+          "first_relevant_rank": 3,
+          "reciprocal_rank": 0.3333333333333333,
+          "hit@1": 0.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 0.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r15",
+          "type": "exact_id",
+          "retrieved": [
+            "clinical-escalation#005",
+            "clinical-escalation#004",
+            "clinical-escalation#001",
+            "clinical-escalation#006",
+            "clinical-escalation#002"
+          ],
+          "relevant": [
+            "clinical-escalation#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        }
+      ]
+    },
+    "hybrid": {
+      "metrics": {
+        "mrr": 0.933,
+        "hit@1": 0.867,
+        "recall@1": 0.767,
+        "precision@1": 0.867,
+        "hit@3": 1.0,
+        "recall@3": 1.0,
+        "precision@3": 0.4,
+        "hit@5": 1.0,
+        "recall@5": 1.0,
+        "precision@5": 0.24,
+        "latency_median_ms": 26.3,
+        "latency_mean_ms": 27.2
+      },
+      "questions": [
+        {
+          "id": "r01",
+          "type": "exact_id",
+          "retrieved": [
+            "preauth-matrix#004",
+            "preauth-matrix#005",
+            "preauth-matrix#014",
+            "preauth-matrix#002",
+            "preauth-matrix#007"
+          ],
+          "relevant": [
+            "preauth-matrix#004"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r02",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#014",
+            "preauth-matrix#004",
+            "preauth-matrix#000",
+            "preauth-matrix#005",
+            "referral-policy#002"
+          ],
+          "relevant": [
+            "preauth-matrix#014"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r03",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#003",
+            "preauth-matrix#002",
+            "clinical-escalation#005",
+            "preauth-matrix#012",
+            "copay-schedule#004"
+          ],
+          "relevant": [
+            "preauth-matrix#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r04",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#011",
+            "preauth-matrix#010",
+            "preauth-matrix#002",
+            "preauth-matrix#007",
+            "preauth-matrix#013"
+          ],
+          "relevant": [
+            "preauth-matrix#011"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r05",
+          "type": "paraphrase",
+          "retrieved": [
+            "preauth-matrix#002",
+            "preauth-matrix#009",
+            "preauth-matrix#010",
+            "referral-policy#006",
+            "preauth-matrix#003"
+          ],
+          "relevant": [
+            "preauth-matrix#002"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r06",
+          "type": "exact_id",
+          "retrieved": [
+            "preauth-matrix#001",
+            "preauth-matrix#016",
+            "referral-policy#007",
+            "preauth-matrix#017",
+            "preauth-matrix#000"
+          ],
+          "relevant": [
+            "preauth-matrix#001",
+            "preauth-matrix#016"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r07",
+          "type": "exact_id",
+          "retrieved": [
+            "copay-schedule#003",
+            "copay-schedule#002",
+            "copay-schedule#001",
+            "copay-schedule#005",
+            "preauth-matrix#000"
+          ],
+          "relevant": [
+            "copay-schedule#002",
+            "copay-schedule#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r08",
+          "type": "near_duplicate",
+          "retrieved": [
+            "copay-schedule#002",
+            "copay-schedule#004",
+            "copay-schedule#005",
+            "preauth-matrix#001",
+            "copay-schedule#003"
+          ],
+          "relevant": [
+            "copay-schedule#002"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r09",
+          "type": "paraphrase",
+          "retrieved": [
+            "copay-schedule#005",
+            "copay-schedule#004",
+            "clinical-escalation#000",
+            "copay-schedule#003",
+            "copay-schedule#001"
+          ],
+          "relevant": [
+            "copay-schedule#004",
+            "copay-schedule#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r10",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#003",
+            "referral-policy#006",
+            "referral-policy#005",
+            "clinical-escalation#005",
+            "referral-policy#007"
+          ],
+          "relevant": [
+            "referral-policy#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r11",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#002",
+            "referral-policy#006",
+            "preauth-matrix#010",
+            "referral-policy#003",
+            "preauth-matrix#001"
+          ],
+          "relevant": [
+            "referral-policy#002"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r12",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#005",
+            "referral-policy#004",
+            "referral-policy#007",
+            "referral-policy#006",
+            "referral-policy#003"
+          ],
+          "relevant": [
+            "referral-policy#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r13",
+          "type": "domain_must_have",
+          "retrieved": [
+            "clinical-escalation#005",
+            "clinical-escalation#006",
+            "clinical-escalation#002",
+            "referral-policy#006",
+            "referral-policy#004"
+          ],
+          "relevant": [
+            "clinical-escalation#006"
+          ],
+          "first_relevant_rank": 2,
+          "reciprocal_rank": 0.5,
+          "hit@1": 0.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 0.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r14",
+          "type": "paraphrase",
+          "retrieved": [
+            "clinical-escalation#001",
+            "clinical-escalation#005",
+            "clinical-escalation#003",
+            "clinical-escalation#000",
+            "referral-policy#005"
+          ],
+          "relevant": [
+            "clinical-escalation#005"
+          ],
+          "first_relevant_rank": 2,
+          "reciprocal_rank": 0.5,
+          "hit@1": 0.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 0.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r15",
+          "type": "exact_id",
+          "retrieved": [
+            "clinical-escalation#005",
+            "clinical-escalation#004",
+            "clinical-escalation#001",
+            "clinical-escalation#007",
+            "referral-policy#003"
+          ],
+          "relevant": [
+            "clinical-escalation#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        }
+      ]
+    },
+    "hybrid_rerank": {
+      "metrics": {
+        "mrr": 0.956,
+        "hit@1": 0.933,
+        "recall@1": 0.833,
+        "precision@1": 0.933,
+        "hit@3": 1.0,
+        "recall@3": 1.0,
+        "precision@3": 0.4,
+        "hit@5": 1.0,
+        "recall@5": 1.0,
+        "precision@5": 0.24,
+        "latency_median_ms": 1383.6,
+        "latency_mean_ms": 1365.5
+      },
+      "questions": [
+        {
+          "id": "r01",
+          "type": "exact_id",
+          "retrieved": [
+            "preauth-matrix#004",
+            "preauth-matrix#005",
+            "preauth-matrix#014",
+            "preauth-matrix#007",
+            "preauth-matrix#015"
+          ],
+          "relevant": [
+            "preauth-matrix#004"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r02",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#014",
+            "preauth-matrix#004",
+            "preauth-matrix#008",
+            "preauth-matrix#002",
+            "preauth-matrix#005"
+          ],
+          "relevant": [
+            "preauth-matrix#014"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r03",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#003",
+            "preauth-matrix#002",
+            "preauth-matrix#005",
+            "preauth-matrix#010",
+            "preauth-matrix#004"
+          ],
+          "relevant": [
+            "preauth-matrix#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r04",
+          "type": "near_duplicate",
+          "retrieved": [
+            "preauth-matrix#011",
+            "preauth-matrix#013",
+            "preauth-matrix#010",
+            "preauth-matrix#007",
+            "preauth-matrix#004"
+          ],
+          "relevant": [
+            "preauth-matrix#011"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r05",
+          "type": "paraphrase",
+          "retrieved": [
+            "preauth-matrix#003",
+            "preauth-matrix#009",
+            "preauth-matrix#002",
+            "preauth-matrix#010",
+            "preauth-matrix#013"
+          ],
+          "relevant": [
+            "preauth-matrix#002"
+          ],
+          "first_relevant_rank": 3,
+          "reciprocal_rank": 0.3333333333333333,
+          "hit@1": 0.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 0.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r06",
+          "type": "exact_id",
+          "retrieved": [
+            "preauth-matrix#001",
+            "preauth-matrix#016",
+            "preauth-matrix#017",
+            "preauth-matrix#000",
+            "preauth-matrix#002"
+          ],
+          "relevant": [
+            "preauth-matrix#001",
+            "preauth-matrix#016"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r07",
+          "type": "exact_id",
+          "retrieved": [
+            "copay-schedule#003",
+            "copay-schedule#002",
+            "copay-schedule#005",
+            "copay-schedule#001",
+            "preauth-matrix#004"
+          ],
+          "relevant": [
+            "copay-schedule#002",
+            "copay-schedule#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r08",
+          "type": "near_duplicate",
+          "retrieved": [
+            "copay-schedule#002",
+            "copay-schedule#004",
+            "preauth-matrix#000",
+            "copay-schedule#003",
+            "preauth-matrix#003"
+          ],
+          "relevant": [
+            "copay-schedule#002"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r09",
+          "type": "paraphrase",
+          "retrieved": [
+            "copay-schedule#004",
+            "copay-schedule#005",
+            "referral-policy#006",
+            "copay-schedule#002",
+            "copay-schedule#001"
+          ],
+          "relevant": [
+            "copay-schedule#004",
+            "copay-schedule#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.6666666666666666,
+          "precision@5": 0.4
+        },
+        {
+          "id": "r10",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#003",
+            "referral-policy#005",
+            "referral-policy#006",
+            "clinical-escalation#007",
+            "referral-policy#007"
+          ],
+          "relevant": [
+            "referral-policy#003"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r11",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#002",
+            "referral-policy#006",
+            "referral-policy#003",
+            "preauth-matrix#010",
+            "clinical-escalation#005"
+          ],
+          "relevant": [
+            "referral-policy#002"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r12",
+          "type": "paraphrase",
+          "retrieved": [
+            "referral-policy#005",
+            "referral-policy#006",
+            "referral-policy#004",
+            "referral-policy#007",
+            "referral-policy#003"
+          ],
+          "relevant": [
+            "referral-policy#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r13",
+          "type": "domain_must_have",
+          "retrieved": [
+            "clinical-escalation#006",
+            "clinical-escalation#005",
+            "clinical-escalation#002",
+            "clinical-escalation#003",
+            "referral-policy#006"
+          ],
+          "relevant": [
+            "clinical-escalation#006"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r14",
+          "type": "paraphrase",
+          "retrieved": [
+            "clinical-escalation#005",
+            "clinical-escalation#001",
+            "clinical-escalation#004",
+            "clinical-escalation#002",
+            "clinical-escalation#007"
+          ],
+          "relevant": [
+            "clinical-escalation#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        },
+        {
+          "id": "r15",
+          "type": "exact_id",
+          "retrieved": [
+            "clinical-escalation#005",
+            "clinical-escalation#006",
+            "clinical-escalation#002",
+            "clinical-escalation#004",
+            "clinical-escalation#007"
+          ],
+          "relevant": [
+            "clinical-escalation#005"
+          ],
+          "first_relevant_rank": 1,
+          "reciprocal_rank": 1.0,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@5": 1.0,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333333333333333,
+          "precision@5": 0.2
+        }
+      ]
+    }
+  }
+}
