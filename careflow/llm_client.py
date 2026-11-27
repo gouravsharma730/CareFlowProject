@@ -8,6 +8,13 @@ with exponential backoff: 2s, 4s, 8s, ... Permanent errors (wrong model
 name, bad API key) are NOT retried and are raised immediately.
 """
 
+import litellm
+from litellm import completion
+
+# Stop LiteLLM printing its "Provider List / Give Feedback" help text on
+# every error. Our own logger still records each error and retry.
+litellm.suppress_debug_info = True
+
 import logging
 import time
 

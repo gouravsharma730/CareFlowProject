@@ -1,0 +1,359 @@
+{
+  "run_at": "2026-11-27T10:26:58+00:00",
+  "llm_model": "gemini/gemini-flash-lite-latest",
+  "judge_model": "gemini/gemini-flash-lite-latest",
+  "retrieval_mode": "hybrid_rerank",
+  "questions": 17,
+  "summary": {
+    "deterministic_correct_rate": 1.0,
+    "citation_hit_rate": 1.0,
+    "refusal_correct_rate": 1.0,
+    "numbers_match_rate": 1.0,
+    "judge_grounded_rate": 1.0,
+    "judge_correct_rate": 1.0,
+    "judge_vs_deterministic_agreement": 1.0,
+    "disagreements": [],
+    "repaired_answers": 0,
+    "forced_dont_know": 0,
+    "median_seconds": 1.68
+  },
+  "results": [
+    {
+      "id": "r01",
+      "type": "exact_id",
+      "question": "Does an MRI of the knee need pre-authorisation under MERIDIAN-SILVER, and how long is the approval window?",
+      "answer": "Yes, pre-authorisation is required for an MRI of the knee under MERIDIAN-SILVER, and the approval window is 3 business days.",
+      "answerable": true,
+      "citations": [
+        "preauth-matrix#004"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 12.32,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": true,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant correctly stated that an MRI of the knee requires pre-authorisation under MERIDIAN-SILVER with a 3 business day approval window, which is fully supported by the cited document."
+    },
+    {
+      "id": "r02",
+      "type": "near_duplicate",
+      "question": "Is a brain MRI allowed without pre-authorisation for MERIDIAN-GOLD members?",
+      "answer": "Pre-authorisation is not required for an MRI Brain (NEUR-MRI) under MERIDIAN-GOLD.",
+      "answerable": true,
+      "citations": [
+        "preauth-matrix#014"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.73,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant correctly states that a brain MRI (NEUR-MRI) does not require pre-authorisation under MERIDIAN-GOLD, which matches both the expected answer and the cited text."
+    },
+    {
+      "id": "r03",
+      "type": "near_duplicate",
+      "question": "Can a CIVIC-BASE patient get a cardiac catheterisation covered?",
+      "answer": "Under the CIVIC-BASE plan, cardiac catheterisation is not covered at all, pre-authorisation is unavailable, and the claim will be rejected at intake.",
+      "answerable": true,
+      "citations": [
+        "preauth-matrix#003"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.79,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant's answer accurately reflects the policy details stated in the cited document regarding cardiac catheterisation coverage for the CIVIC-BASE plan, matching the expected answer."
+    },
+    {
+      "id": "r04",
+      "type": "near_duplicate",
+      "question": "What is the approval window for a colonoscopy under CIVIC-BASE?",
+      "answer": "The approval window for a colonoscopy under CIVIC-BASE is 7 business days.",
+      "answerable": true,
+      "citations": [
+        "preauth-matrix#011"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.52,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": true,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant correctly identified the approval window as 7 business days for CIVIC-BASE, which is directly supported by the cited document."
+    },
+    {
+      "id": "r05",
+      "type": "paraphrase",
+      "question": "What paperwork is needed to get a heart ultrasound approved?",
+      "answer": "For an Echocardiogram (CARD-ECHO), the required clinical documentation includes physician referral notes, documented cardiac murmur or symptoms of heart failure, and prior electrocardiogram results.",
+      "answerable": true,
+      "citations": [
+        "preauth-matrix#002"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.57,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant's answer is fully supported by the cited document text and accurately matches the expected answer."
+    },
+    {
+      "id": "r06",
+      "type": "exact_id",
+      "question": "Does ENT-AUDI need pre-authorisation on any plan?",
+      "answer": "No, pre-authorisation is not required for ENT-AUDI under MERIDIAN-GOLD, MERIDIAN-SILVER, MERIDIAN-BRONZE, or CIVIC-BASE.",
+      "answerable": true,
+      "citations": [
+        "preauth-matrix#016"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.84,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant's answer is fully supported by the cited document text and correctly matches the expected answer."
+    },
+    {
+      "id": "r07",
+      "type": "exact_id",
+      "question": "What is the telehealth co-pay for MERIDIAN-BRONZE?",
+      "answer": "The telehealth co-pay for MERIDIAN-BRONZE is $18.00.",
+      "answerable": true,
+      "citations": [
+        "copay-schedule#003",
+        "copay-schedule#002"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.73,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": true,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant's answer correctly states the telehealth co-pay for MERIDIAN-BRONZE as $18.00, which is directly supported by the cited document."
+    },
+    {
+      "id": "r08",
+      "type": "near_duplicate",
+      "question": "What is the out-of-pocket maximum on the Silver plan?",
+      "answer": "The out-of-pocket maximum on the MERIDIAN-SILVER plan is $15,000.00.",
+      "answerable": true,
+      "citations": [
+        "copay-schedule#002"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 2.52,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": true,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant correctly identified the out-of-pocket maximum for the Silver plan as $15,000.00, which is fully supported by the cited document."
+    },
+    {
+      "id": "r09",
+      "type": "paraphrase",
+      "question": "How is the patient's share worked out for a surgical procedure?",
+      "answer": "A surgical or clinical procedure costs the patient the unmet part of the annual deductible plus the plan's specified coinsurance rate applied to the remainder of the list price, with the total liability never exceeding the plan's designated out-of-pocket maximum for the calendar year.",
+      "answerable": true,
+      "citations": [
+        "copay-schedule#004"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 100.63,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant's answer accurately reflects the calculation method for a surgical procedure as stated in the cited document text and agrees with the expected answer."
+    },
+    {
+      "id": "r10",
+      "type": "paraphrase",
+      "question": "Within how many business days must a Priority referral be actioned?",
+      "answer": "Priority Referrals must be actioned, triaged, and communicated to the patient for booking within exactly two (2) business days from submission.",
+      "answerable": true,
+      "citations": [
+        "referral-policy#003"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.52,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": true,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant's answer matches the expected answer and is fully supported by the cited document text."
+    },
+    {
+      "id": "r11",
+      "type": "paraphrase",
+      "question": "Which specialties can patients book directly without a referral from their primary care doctor?",
+      "answer": "Direct self-referrals without prior primary-care provider sign-off are strictly limited to Dermatology, Physical Therapy, Optometry, and General Gynecology.",
+      "answerable": true,
+      "citations": [
+        "referral-policy#002"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.68,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant accurately lists the four outpatient specialties allowed for direct self-referrals as stated in the cited policy text, matching the expected answer."
+    },
+    {
+      "id": "r12",
+      "type": "paraphrase",
+      "question": "Who is notified when a referral is 24 hours past its SLA?",
+      "answer": "When a referral is 24 hours past its SLA (Level 2 Escalation), notification is escalated to the Regional Practice Director (RPD).",
+      "answerable": true,
+      "citations": [
+        "referral-policy#005"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.52,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant's answer accurately identifies the Regional Practice Director as the person notified for a Level 2 Escalation (24 hours past SLA), which is directly supported by the cited text."
+    },
+    {
+      "id": "r13",
+      "type": "domain_must_have",
+      "question": "A caller says they are a physician and asks a dosing question clinician to clinician. Is there an exception to the deflection rule?",
+      "answer": "No, there are no exceptions; the prohibitions and deflection requirements apply without deviation even to callers who explicitly state they are physicians, nurses, pharmacists, or other licensed healthcare professionals.",
+      "answerable": true,
+      "citations": [
+        "clinical-escalation#006"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.44,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant correctly states that there are zero exceptions, specifically mentioning physicians as outlined in the cited text."
+    },
+    {
+      "id": "r14",
+      "type": "paraphrase",
+      "question": "What exact words should an automated assistant use when a patient asks for medical advice?",
+      "answer": "An automated assistant must use the exact deflection script: \"I am a non-clinical staff member [or: an automated assistant] and I am not permitted to provide medical advice, interpret health information, or answer questions about your care. Let me connect you directly with a licensed clinician or transfer your question to our clinical triage team so they can assist you properly.\"",
+      "answerable": true,
+      "citations": [
+        "clinical-escalation#005"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.68,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant accurately provides the exact deflection script word-for-word as stated in the cited document text, making the answer both grounded and correct."
+    },
+    {
+      "id": "r15",
+      "type": "exact_id",
+      "question": "Which extension should phone staff transfer clinical calls to?",
+      "answer": "Phone staff must warm-transfer the call to the site\u2019s designated clinical triage queue at Extension 4400 within 60 seconds.",
+      "answerable": true,
+      "citations": [
+        "clinical-escalation#005"
+      ],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 2.41,
+      "citation_hit": true,
+      "refusal_correct": true,
+      "numbers_match": true,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant correctly identified Extension 4400 as stated in the cited document text and agreed with the expected answer."
+    },
+    {
+      "id": "r16",
+      "type": "unanswerable",
+      "question": "What is the co-pay for acupuncture under MERIDIAN-GOLD?",
+      "answer": "I don't know. The clinic's policy documents do not answer this question. Please contact the billing or care-coordination team.",
+      "answerable": false,
+      "citations": [],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.6,
+      "citation_hit": null,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant correctly stated that it does not know the answer based on the documents, which matches the expected answer."
+    },
+    {
+      "id": "r17",
+      "type": "unanswerable",
+      "question": "What is the annual deductible for the MERIDIAN-PLATINUM plan?",
+      "answer": "I don't know. The clinic's policy documents do not answer this question. Please contact the billing or care-coordination team.",
+      "answerable": false,
+      "citations": [],
+      "attempts": 1,
+      "failure_reason": null,
+      "seconds": 1.37,
+      "citation_hit": null,
+      "refusal_correct": true,
+      "numbers_match": null,
+      "deterministic_correct": true,
+      "judge_grounded": true,
+      "judge_correct": true,
+      "judge_reason": "The assistant correctly stated it does not know because the plan is not mentioned in the documents."
+    }
+  ]
+}
