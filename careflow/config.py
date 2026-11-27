@@ -73,6 +73,19 @@ POLICY_COLLECTION = os.getenv("CAREFLOW_POLICY_COLLECTION", "careflow_policies")
 # How many chunks a search returns by default.
 RETRIEVAL_TOP_K = int(os.getenv("CAREFLOW_RETRIEVAL_TOP_K", "5"))
 
+# Retrieval mode: "dense", "hybrid" (dense + BM25 fused with RRF) or
+# "hybrid_rerank" (hybrid, then reordered by a cross-encoder reranker).
+RETRIEVAL_MODE = os.getenv("CAREFLOW_RETRIEVAL_MODE", "hybrid_rerank")
+
+# How many candidates each search method returns before fusion.
+RETRIEVAL_CANDIDATES = int(os.getenv("CAREFLOW_RETRIEVAL_CANDIDATES", "10"))
+
+# Reciprocal Rank Fusion constant (60 is the usual value from the paper).
+RRF_K = int(os.getenv("CAREFLOW_RRF_K", "60"))
+
+# Cross-encoder reranker (runs locally through fastembed).
+RERANKER_MODEL = os.getenv("CAREFLOW_RERANKER_MODEL", "Xenova/ms-marco-MiniLM-L-6-v2")
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {
