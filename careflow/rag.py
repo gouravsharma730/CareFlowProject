@@ -19,7 +19,7 @@ import re
 
 from pydantic import BaseModel, Field, ValidationError
 
-from careflow import config, tracing
+from careflow import config, guardrails, tracing
 from careflow.llm_client import LLMUnavailable, call_llm
 from careflow.retriever import retrieve
 
@@ -152,6 +152,12 @@ def answer_question(question: str, retriever=None, llm=None) -> RagResult:
     with tracing.span("policy.retrieve", as_type="retriever",
                       mode=config.RETRIEVAL_MODE) as observation:
         chunks = search(question, config.RETRIEVAL_TOP_K)
+        # Retrieved text is untrusted: drop any chunk carrying an injection attempt.
+        chunks, dropped = guardrails.scan_documents(chunks)
+        if dropped:
+            logger.warning("Dropped %d retrieved chunk(s) flagged for injection: %s",
+                           len(dropped), dropped)
+            observation.warn("retrieved content flagged for injection")
         observation.update(retrieved=len(chunks))
     retrieved_ids = [chunk["chunk_id"] for chunk in chunks]
 

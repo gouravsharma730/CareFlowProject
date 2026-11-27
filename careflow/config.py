@@ -156,6 +156,16 @@ TELEMETRY_PATH = Path(
     os.getenv("CAREFLOW_TELEMETRY_PATH", DATA_DIR / "telemetry" / "events.jsonl")
 )
 
+
+# --- Guardrails (M8) ---
+# Prompt-injection score at or above which a message or document is blocked.
+# Tuned on the end-to-end golden set (evals/results/guardrail_eval.json).
+INJECTION_BLOCK_SCORE = int(os.getenv("CAREFLOW_INJECTION_BLOCK_SCORE", "2"))
+
+# Size limits for a patient message and for a reply sent back.
+MAX_MESSAGE_CHARS = int(os.getenv("CAREFLOW_MAX_MESSAGE_CHARS", "2000"))
+MAX_REPLY_CHARS = int(os.getenv("CAREFLOW_MAX_REPLY_CHARS", "1500"))
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {

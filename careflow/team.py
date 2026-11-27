@@ -1,11 +1,14 @@
 """CareFlow's agent team: four specialised agents in one LangGraph graph.
 
-    START -> intake -> supervisor --insurance--> insurance_agent --+
+    START -> input_guard --blocked--> blocked -> END   (--emergency--> emergency)
+                |
+                v
+             intake -> supervisor --insurance--> insurance_agent --+
                           |       --referral---> referral_agent  --+--> safety_review
                           |       --clinical/emergent-------------------^     |
                           |       --hop budget spent--> handoff               |
                           |                                                   |
-      safety_review --approve--> finalize -> END
+      safety_review --approve--> finalize -> output_guard -> END
                     --revise (max MAX_REVISIONS)--> back to the same specialist
                     --clinical--> human_approval --approve/edit--> escalate -> END
                     --emergent--> emergency -> END       --reject--> close_rejected -> END
@@ -41,7 +44,7 @@ from typing import Annotated, Literal, Optional, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
-from careflow import config, tracing, workflow
+from careflow import config, guardrails, tracing, workflow
 from careflow.agent_loop import LoopResult, run_tool_loop
 from careflow.llm_client import LLMUnavailable, call_llm
 from careflow.mcp_client import CareFlowMCP
@@ -85,6 +88,9 @@ SEARCH_POLICY_SCHEMA = {
 # ---- write boundaries: the only keys each node may return ----
 
 OWNED_KEYS = {
+    "input_guard": {"guard", "route"},
+    "blocked": {"final_answer", "stop_reason"},
+    "output_guard": {"final_answer", "stop_reason", "output_flags"},
     "intake": {"request", "route"},
     "supervisor": {"assigned_agent", "hops", "route"},
     "insurance_agent": {"insurance_result"},
@@ -101,6 +107,8 @@ class TeamState(TypedDict, total=False):
     channel: str
     raw_text: str
     insurance_id_stated: Optional[str]
+    guard: Optional[dict]            # input guardrail decision (code, not a model)
+    output_flags: list[str]
     request: Optional[dict]
     route: str
     assigned_agent: Optional[str]
@@ -177,6 +185,42 @@ def _request_view(state: TeamState) -> dict:
             ("patient_ref", "channel", "specialty", "insurance_id", "urgency", "missing_fields")}
 
 
+# ---- guardrails (code only, before and after the models) ----
+
+def input_guard(state: TeamState) -> dict:
+    check = guardrails.check_input(state.get("raw_text"))
+    route = {"block": "blocked", "emergency": "emergency"}.get(check.action, "intake")
+    return {"guard": check.to_dict(), "route": route,
+            "audit": [{"event": "input_guard", "action": check.action, "flags": check.flags,
+                       "injection_score": check.injection_score, "at": workflow._now(),
+                       "agent": "guardrail"}]}
+
+
+def blocked(state: TeamState) -> dict:
+    return {"final_answer": "I can't process this message. If you need help with an "
+                            "appointment, a referral or your insurance, please ask again "
+                            "in your own words.",
+            "stop_reason": "blocked_input"}
+
+
+def output_guard(state: TeamState) -> dict:
+    ok, flags = guardrails.check_output(state.get("final_answer"), state.get("patient_ref"))
+    if ok:
+        return {"output_flags": []}
+    return {"final_answer": guardrails.SAFE_REPLY, "stop_reason": "blocked_output",
+            "output_flags": flags,
+            "audit": [{"event": "output_guard", "flags": flags, "at": workflow._now(),
+                       "agent": "guardrail"}]}
+
+
+def needs_clinician(state: TeamState) -> bool:
+    """Clinical if the input guardrail OR the intake model says so."""
+    request = state.get("request") or {}
+    return ((state.get("guard") or {}).get("action") == "clinical"
+            or bool(request.get("seeks_clinical_advice"))
+            or bool(request.get("requires_human_review")))
+
+
 # ---- intake (M1) ----
 
 def intake_agent(state: TeamState) -> dict:
@@ -226,8 +270,7 @@ def supervisor(state: TeamState) -> dict:
         return {"hops": hops, "route": "hop_budget_spent",
                 "audit": [{"event": "supervisor_budget_spent", "hops": hops,
                            "at": workflow._now(), "agent": "supervisor"}]}
-    if request["urgency"] == "Emergent" or request["seeks_clinical_advice"] \
-            or request["requires_human_review"]:
+    if request["urgency"] == "Emergent" or needs_clinician(state):
         agent, how, route = None, "rule", "safety_review"
     else:
         agent, how = choose_agent(state["raw_text"])
@@ -354,7 +397,7 @@ def safety_review(state: TeamState, llm=None) -> dict:
     if request["urgency"] == "Emergent":
         return {"route": "emergency", "review": {"verdict": "emergency"},
                 "audit": [{"event": "review", "verdict": "emergency", "at": now, "agent": "safety"}]}
-    if request["seeks_clinical_advice"] or request["requires_human_review"]:
+    if needs_clinician(state):
         return {"route": "human_approval", "review": {"verdict": "escalate"},
                 "audit": [{"event": "review", "verdict": "escalate", "at": now, "agent": "safety"}]}
 
@@ -415,6 +458,10 @@ def finalize(state: TeamState) -> dict:
 
 # ---- routers (pure functions of state) ----
 
+def route_after_input_guard(state: TeamState) -> str:
+    return {"blocked": "blocked", "emergency": "emergency"}.get(state["route"], "intake")
+
+
 def route_after_intake(state: TeamState) -> str:
     return "supervisor" if state.get("route") == "triage" else "handoff"
 
@@ -437,6 +484,9 @@ AGENT_NODES = {"intake", "supervisor", "insurance_agent", "referral_agent", "saf
 
 def build_team_graph(checkpointer=None):
     nodes = {
+        "input_guard": bounded("input_guard", input_guard),
+        "blocked": bounded("blocked", blocked),
+        "output_guard": bounded("output_guard", output_guard),
         "intake": bounded("intake", intake_agent),
         "supervisor": bounded("supervisor", supervisor),
         "insurance_agent": bounded("insurance_agent", _specialist("insurance")),
@@ -454,9 +504,12 @@ def build_team_graph(checkpointer=None):
     graph = StateGraph(TeamState)
     for name, node in nodes.items():
         graph.add_node(name, tracing.traced_node(
-            name, node, as_type="agent" if name in AGENT_NODES else "span"))
+            name, node, as_type="agent" if name in AGENT_NODES
+            else "guardrail" if name in ("input_guard", "output_guard") else "span"))
 
-    graph.add_edge(START, "intake")
+    graph.add_edge(START, "input_guard")
+    graph.add_conditional_edges("input_guard", route_after_input_guard,
+                                ["intake", "blocked", "emergency"])
     graph.add_conditional_edges("intake", route_after_intake, ["supervisor", "handoff"])
     graph.add_conditional_edges("supervisor", route_after_supervisor,
                                 ["insurance_agent", "referral_agent", "safety_review", "handoff"])
@@ -467,7 +520,9 @@ def build_team_graph(checkpointer=None):
                                  "human_approval", "emergency", "handoff"])
     graph.add_conditional_edges("human_approval", workflow.route_after_approval,
                                 ["escalate", "close_rejected", "hold", "human_approval"])
-    for name in ("finalize", "escalate", "close_rejected", "hold", "emergency", "handoff"):
+    graph.add_edge("finalize", "output_guard")
+    for name in ("output_guard", "blocked", "escalate", "close_rejected", "hold",
+                 "emergency", "handoff"):
         graph.add_edge(name, END)
     return graph.compile(checkpointer=checkpointer, name="careflow-team")
 
