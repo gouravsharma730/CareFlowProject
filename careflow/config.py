@@ -63,6 +63,16 @@ CORPUS_DIR = Path(os.getenv("CAREFLOW_CORPUS_DIR", DATA_DIR / "careflow" / "corp
 # paragraphs; a single paragraph or table is never cut in the middle.
 CHUNK_MAX_CHARS = int(os.getenv("CAREFLOW_CHUNK_MAX_CHARS", "1200"))
 
+# Embedding model (runs locally through fastembed, no API key needed).
+EMBEDDING_MODEL = os.getenv("CAREFLOW_EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
+
+# Where the Qdrant vector index is saved (survives restarts).
+QDRANT_PATH = Path(os.getenv("CAREFLOW_QDRANT_PATH", DATA_DIR / "qdrant_store"))
+POLICY_COLLECTION = os.getenv("CAREFLOW_POLICY_COLLECTION", "careflow_policies")
+
+# How many chunks a search returns by default.
+RETRIEVAL_TOP_K = int(os.getenv("CAREFLOW_RETRIEVAL_TOP_K", "5"))
+
 def summary() -> dict:
     """Return the current settings (never includes secret keys)."""
     return {
