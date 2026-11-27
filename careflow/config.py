@@ -61,3 +61,7 @@ def summary() -> dict:
 if __name__ == "__main__":
     for key, value in summary().items():
         print(f"{key}: {value}")
+        
+# Working memory: how much of the current conversation is sent to the model.
+MAX_HISTORY_TURNS = int(os.getenv("CAREFLOW_MAX_HISTORY_TURNS", "6"))
+MAX_HISTORY_CHARS = int(os.getenv("CAREFLOW_MAX_HISTORY_CHARS", "4000"))

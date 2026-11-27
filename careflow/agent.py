@@ -18,6 +18,7 @@ from careflow.llm_client import chat_with_tools
 from careflow.memory_context import build_memory_context
 from careflow.memory_store import MemoryStore
 from careflow.procedures import find_procedure, format_procedure, procedure_label
+from careflow.working_memory import WorkingMemory
 from careflow.tools import execute_tool, tool_schemas
 
 logger = logging.getLogger(__name__)
@@ -95,6 +96,7 @@ def run_agent(
     user_message: str,
     patient_ref: str | None = None,
     session_id: str | None = None,
+    history: WorkingMemory | None = None,
 ) -> AgentResult:
     """Run one request through the tool-using agent.
 
@@ -104,6 +106,9 @@ def run_agent(
             loaded into the prompt.
         session_id: Identifier of this conversation, stored with any
             memory the run writes.
+        history: Optional working memory of this conversation. Its
+            recent turns are sent to the model, and this turn is added
+            to it when the model gives a final answer.
 
     Returns:
         AgentResult. stop_reason is "final_answer" when the model
@@ -122,10 +127,11 @@ def run_agent(
     if procedure:
         system_content = f"{system_content}\n\n{format_procedure(procedure)}"
 
-    messages = [
-        {"role": "system", "content": system_content},
-        {"role": "user", "content": user_content},
-    ]
+    messages = [{"role": "system", "content": system_content}]
+    if history is not None:
+        messages.extend(history.messages())
+    messages.append({"role": "user", "content": user_content})
+
     executed: list[dict] = []
     schemas = tool_schemas()
 
@@ -133,6 +139,8 @@ def run_agent(
         message = chat_with_tools(messages, schemas)
 
         if not message.tool_calls:
+            if history is not None:
+                history.add(user_message, message.content or "")
             return AgentResult(
                 final_answer=message.content or "",
                 stop_reason=STOP_FINAL,
