@@ -157,7 +157,7 @@ Every result below is saved as JSON in [`evals/results/`](evals/results/).
 | Agent team | `python -m evals.team_test` | 14/14 checks passed |
 | Fault injection (no API calls) | `python -m evals.fault_injection` | flaky clinic system: success 0.727 → 0.967; outage: success 0.73 → 0.793 with 0 unflagged failures and fewer calls to the failing system |
 | Guardrails (29 cases, no API calls) | `python -m evals.eval_guardrails` | accuracy 1.0, refusal recall 1.0, refusal precision 1.0 |
-| End-to-end golden set (29 cases) | `python -m evals.eval_e2e baseline` | baseline 28/29 (the one failure, e12, was fixed afterwards) |
+| End-to-end golden set (29 cases) | `python -m evals.eval_e2e baseline` / `improved` | baseline 28/29 → improved **29/29** after the e12 fix (see `docs/experiments.md`) |
 | Cost and latency KPIs | `python -m evals.kpi_report` | from local telemetry |
 
 > **Free-tier note:** evals that call Gemini are paced at about 7 s per call, and the end-to-end eval can be resumed if the daily quota runs out. The daily quota resets at midnight Pacific time.

@@ -159,10 +159,10 @@ The state is checkpointed after every node, so a paused request survives a proce
 | Agent team | 14/14 checks | `team_test.json` |
 | Fault injection | flaky 0.727 → 0.967; outage 0.73 → 0.793, 0 unflagged failures | `fault_injection.json` |
 | Guardrails | accuracy, recall, precision 1.0 | `guardrail_eval.json` |
-| End-to-end baseline | 28/29; guardrail, outcome, routing and tools 1.0; answer content 0.938; judge 1.0 | `e2e_baseline.json` |
+| End-to-end baseline → improved | 28/29 → **29/29**; answer content 0.938 → 1.0; guardrail, outcome, routing, tools 1.0 in both; judge faithful 1.0 → 0.938 (one judge error on e27, explained in `docs/experiments.md`) | `e2e_baseline.json`, `e2e_improved.json` |
 | Cost | team test: 9 LLM calls, 9,967 tokens, about $0.0044 at list price | `kpi_report.json` |
 
-The one end-to-end failure (e12: a cost quoted for a plan that does not exist) was fixed in the system, not in the golden set. The specialist now notes unknown plans, and the critic rejects dollar figures for plans not in the plans table.
+The one baseline failure (e12: a cost quoted for a plan that does not exist) was fixed in the system, not in the golden set. The specialist now notes unknown plans, and the critic rejects dollar figures for plans not in the plans table. Re-running the same 29 cases gave 29/29.
 
 ---
 
